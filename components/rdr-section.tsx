@@ -1,146 +1,141 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
+import {
+  preventionPosters,
+  rdrContent,
+} from "@/config/prevention";
 
-type Poster = {
-  id: string;
-  title: string;
-  subtitle: string;
-  color: string;
-  textColor: string;
-  rotation: number;
-};
+const FAN_ROTATE_DEG = 7;
+const FAN_OFFSET_X = 34;
+const FAN_DROP_Y = 9;
 
-const POSTERS: Poster[] = [
-  {
-    id: "p1",
-    title: "Hydratez-vous",
-    subtitle: "L'eau est gratuite au bar.",
-    color: "bg-[#0088bb]", // Blue
-    textColor: "text-white",
-    rotation: -4,
-  },
-  {
-    id: "p2",
-    title: "Protégez vos oreilles",
-    subtitle: "Bouchons d'oreilles disponibles.",
-    color: "bg-[#ffdf24]", // Yellow
-    textColor: "text-brand-black",
-    rotation: 2,
-  },
-  {
-    id: "p3",
-    title: "Faites des pauses",
-    subtitle: "Prenez l'air de temps en temps.",
-    color: "bg-[#e53935]", // Red
-    textColor: "text-white",
-    rotation: -2,
-  },
-  {
-    id: "p4",
-    title: "Veillez ensemble",
-    subtitle: "Alertez le staff en cas de souci.",
-    color: "bg-[#43a047]", // Green
-    textColor: "text-white",
-    rotation: 5,
-  },
-];
+function ShieldIcon({ className = "size-5" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  );
+}
 
 export function RdrSection() {
-  const [order, setOrder] = useState<string[]>(POSTERS.map((p) => p.id));
+  const posters = preventionPosters;
+  const [activeIndex, setActiveIndex] = useState(
+    Math.floor(posters.length / 2),
+  );
 
-  function nextPoster() {
-    setOrder((current) => {
-      const next = [...current];
-      const top = next.shift();
-      if (top) next.push(top);
-      return next;
-    });
+  if (posters.length === 0) return null;
+
+  function showNext() {
+    setActiveIndex((current) => (current + 1) % posters.length);
   }
 
   return (
-    <section className="relative overflow-hidden bg-brand-black px-6 py-16 text-brand-yellow">
-      {/* Texture de fond si nécessaire, ou on garde propre */}
-      <div className="relative z-10 flex flex-col items-center">
-        <div className="text-center">
-          <p className="font-display text-sm tracking-[0.2em] uppercase text-brand-yellow/70">
-            Prévention / RDR
-          </p>
-          <h2 className="mt-2 font-display text-4xl leading-none uppercase">
-            Faites tourner le message
-          </h2>
-          <p className="mt-4 max-w-sm text-base leading-relaxed text-brand-yellow/80">
-            Nous avons préparé une série d&apos;affiches de réduction des risques (RDR). 
-            Touchez les cartes pour les faire défiler.
-          </p>
-        </div>
-
-        {/* Deck of cards */}
-        <div 
-          className="relative mt-12 mb-8 h-[360px] w-full max-w-[280px]"
-          onClick={nextPoster}
-        >
-          {POSTERS.map((poster) => {
-            const indexInStack = order.indexOf(poster.id);
-            const isTop = indexInStack === 0;
-            
-            // Calculer les positions en fonction de l'ordre
-            // index 0: devant, scale 1, translateY 0
-            // index 1: derriere, scale 0.95, translateY 20px
-            // index 2: encore derriere, scale 0.90, translateY 40px
-            const translateY = indexInStack * 15;
-            const scale = 1 - indexInStack * 0.04;
-            const zIndex = POSTERS.length - indexInStack;
-            const opacity = indexInStack < 3 ? 1 : 0; // On en affiche 3 max
-
-            return (
-              <div
-                key={poster.id}
-                className={`absolute inset-0 flex flex-col items-center justify-center rounded-3xl border-4 border-brand-black p-6 shadow-[4px_4px_0_0_#0a0a0a] transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${poster.color} ${poster.textColor}`}
-                style={{
-                  zIndex,
-                  opacity,
-                  transform: `translateY(${translateY}px) scale(${scale}) rotate(${
-                    isTop ? 0 : poster.rotation
-                  }deg)`,
-                  transformOrigin: "bottom center",
-                  pointerEvents: isTop ? "auto" : "none",
-                }}
-              >
-                {/* On pourrait mettre un composant Image ici pour les vraies affiches */}
-                <div className="flex h-full w-full flex-col items-center justify-center text-center">
-                  <span className="mb-4 text-6xl opacity-80 mix-blend-overlay">
-                    {/* Placeholder icon/shape */}
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2L2 22h20L12 2zm0 3.8L18.4 19H5.6L12 5.8zm-1 4.2v5h2v-5h-2zm0 6v2h2v-2h-2z"/>
-                    </svg>
-                  </span>
-                  <h3 className="font-display text-3xl uppercase leading-none">
-                    {poster.title}
-                  </h3>
-                  <p className="mt-3 text-sm font-medium opacity-90">
-                    {poster.subtitle}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            // Action de commande d'affiches
-            window.location.href = "mailto:contact@fetedelamusique.fr?subject=Commande d'affiches RDR";
-          }}
-          className="mt-6 rounded-full bg-brand-yellow px-8 py-4 font-display text-xl uppercase leading-none text-brand-black shadow-[4px_4px_0_0_rgba(255,223,36,0.4)] transition-transform active:scale-95"
-        >
-          Commander ces affiches
-        </button>
-        <p className="mt-4 text-center text-xs text-brand-yellow/60">
-          Pour afficher dans votre lieu
+    <section
+      id="rdr"
+      className="scroll-mt-[var(--mobile-header-height)] relative z-10 -mt-6 rounded-t-3xl bg-brand-yellow px-4 pt-8 pb-20 text-brand-black"
+    >
+      <div className="flex items-center gap-2.5">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-brand-black bg-brand-black text-brand-yellow">
+          <ShieldIcon className="size-4" />
+        </span>
+        <p className="font-display text-sm tracking-[0.2em] uppercase text-brand-black/70">
+          {rdrContent.eyebrow}
         </p>
       </div>
+
+      <h2 className="mt-3 font-display text-4xl leading-[0.95] uppercase">
+        {rdrContent.title}
+      </h2>
+
+      <p className="mt-3 max-w-prose text-sm leading-relaxed text-brand-black/80">
+        {rdrContent.description}
+      </p>
+
+      <div className="mt-8 flex flex-col items-center">
+        <button
+          type="button"
+          onClick={showNext}
+          aria-label="Afficher l'affiche suivante"
+          className="relative h-[280px] w-full max-w-[20rem] [perspective:1000px]"
+        >
+          {posters.map((poster, index) => {
+            const diff = index - activeIndex;
+            const distance = Math.abs(diff);
+            const isActive = diff === 0;
+
+            const style: React.CSSProperties = {
+              transform: `translateX(-50%) translateX(${
+                diff * FAN_OFFSET_X
+              }px) translateY(${distance * FAN_DROP_Y}px) rotate(${
+                diff * FAN_ROTATE_DEG
+              }deg) scale(${isActive ? 1 : 0.94})`,
+              transformOrigin: "bottom center",
+              zIndex: posters.length - distance,
+              opacity: distance > 3 ? 0 : 1,
+            };
+
+            return (
+              <span
+                key={poster.id}
+                style={style}
+                className={`absolute bottom-0 left-1/2 block aspect-[2/3] w-[10.5rem] overflow-hidden rounded-2xl border-2 border-brand-black bg-white shadow-[4px_4px_0_0_#0a0a0a] transition-all duration-300 ease-out ${
+                  isActive ? "" : "brightness-95"
+                }`}
+              >
+                <Image
+                  src={poster.image}
+                  alt={poster.title}
+                  fill
+                  sizes="170px"
+                  className="object-cover"
+                />
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-black/85 to-transparent px-3 pt-8 pb-3">
+                  <span className="font-display block text-base leading-none text-brand-yellow uppercase">
+                    {poster.title}
+                  </span>
+                </span>
+              </span>
+            );
+          })}
+        </button>
+
+        <div className="mt-5 flex items-center gap-1.5" aria-hidden="true">
+          {posters.map((poster, index) => (
+            <span
+              key={poster.id}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                index === activeIndex
+                  ? "w-5 bg-brand-black"
+                  : "w-1.5 bg-brand-black/30"
+              }`}
+            />
+          ))}
+        </div>
+
+        <p className="mt-3 text-center text-xs tracking-wide text-brand-black/55 uppercase">
+          {rdrContent.hint}
+        </p>
+      </div>
+
+      <a
+        href={rdrContent.orderHref}
+        className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 border-brand-black bg-brand-black px-5 text-center font-display text-lg tracking-wide text-brand-yellow uppercase shadow-[4px_4px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
+      >
+        <ShieldIcon className="size-5" />
+        {rdrContent.orderLabel}
+      </a>
     </section>
   );
 }
