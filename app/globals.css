@@ -40,7 +40,7 @@
 #hero.hero-inactive,
 #hero-ui.hero-inactive,
 #hero-frame.hero-inactive {
-  opacity: 0;
+  visibility: hidden;
   pointer-events: none !important;
 }
 
