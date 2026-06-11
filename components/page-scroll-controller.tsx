@@ -8,6 +8,11 @@ const HERO_UI_CONTENT_LAG = 0.55;
 const HERO_UI_CONTENT_DELAY_RATIO = 0.12;
 const HERO_UI_CONTENT_MAX_RATIO = 0.45;
 
+// Fraction of hero height at which the snap commits (38 % = seuil d'ancrage)
+const SNAP_THRESHOLD = 0.38;
+// Minimum swipe velocity (px/ms) to override position-based decision
+const SNAP_VEL_MIN = 0.12;
+
 function getScrollY() {
   return (
     document.scrollingElement?.scrollTop ??
@@ -40,6 +45,77 @@ export function PageScrollController() {
     let raf = 0;
     let lastScrollY = -1;
     let isPageVisible = !document.hidden;
+
+    // ── Snap state ──────────────────────────────────────────────────────────
+    let isSnapping = false;
+    let touchVelocityY = 0; // px/ms, positive = scrolling down
+    let prevTouchClientY = 0;
+    let prevTouchTime = 0;
+
+    const snapTo = (targetY: number) => {
+      if (isSnapping) return;
+      isSnapping = true;
+      window.scrollTo({ top: targetY, behavior: "smooth" });
+      window.setTimeout(() => {
+        isSnapping = false;
+      }, 700);
+    };
+
+    const evaluateSnap = () => {
+      if (isSnapping || !heroSpacer) return;
+      const scrollY = getScrollY();
+      const height = heroSpacer.offsetHeight || 1;
+
+      // Only act when in the transition zone
+      if (scrollY <= 2 || scrollY >= height - 2) return;
+
+      const vel = touchVelocityY;
+      // Predict where momentum will carry the scroll (rough 250 ms estimate)
+      const predictedProgress = Math.max(
+        0,
+        Math.min(1, (scrollY + vel * 250) / height),
+      );
+
+      let goDown: boolean;
+      if (vel > SNAP_VEL_MIN) {
+        goDown = true; // fast swipe down → snap to content
+      } else if (vel < -SNAP_VEL_MIN) {
+        goDown = false; // fast swipe up → snap to top
+      } else {
+        goDown = predictedProgress >= SNAP_THRESHOLD;
+      }
+
+      snapTo(goDown ? height : 0);
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      // Allow user to interrupt an in-progress snap
+      isSnapping = false;
+      const t = e.touches[0];
+      if (t) {
+        prevTouchClientY = t.clientY;
+        prevTouchTime = Date.now();
+        touchVelocityY = 0;
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      syncScroll();
+      const t = e.touches[0];
+      if (!t) return;
+      const now = Date.now();
+      const dt = now - prevTouchTime;
+      if (dt > 0) {
+        touchVelocityY = (prevTouchClientY - t.clientY) / dt;
+      }
+      prevTouchClientY = t.clientY;
+      prevTouchTime = now;
+    };
+
+    const onTouchEnd = () => {
+      evaluateSnap();
+    };
+    // ────────────────────────────────────────────────────────────────────────
 
     const applyScroll = (scrollY: number) => {
       root.style.setProperty("--page-scroll-y", `${scrollY}px`);
@@ -125,14 +201,20 @@ export function PageScrollController() {
       passive: true,
       capture: true,
     });
-    window.addEventListener("touchmove", syncScroll, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", onTouchEnd, { passive: true });
     window.addEventListener("orientationchange", onOrientationChange);
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("scroll", syncScroll, { capture: true });
-      window.removeEventListener("touchmove", syncScroll);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("touchcancel", onTouchEnd);
       window.removeEventListener("orientationchange", onOrientationChange);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       root.style.removeProperty("--page-scroll-y");
