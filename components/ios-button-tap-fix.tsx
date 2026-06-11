@@ -37,6 +37,8 @@ export function IosButtonTapFix() {
     };
 
     const onClick = (event: MouseEvent) => {
+      // Let synthetic .click() calls through — only suppress trusted ghost clicks.
+      if (!event.isTrusted) return;
       if (Date.now() > suppressClickUntil) return;
       if (!findButton(event.target)) return;
 

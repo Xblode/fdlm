@@ -33,7 +33,7 @@ export function MobileHeroContent() {
       </div>
       <div
         id="hero-ui"
-        className="mobile-hero-height fixed top-[var(--mobile-header-height)] right-0 left-0 z-[5] flex items-center justify-start px-6 md:hidden"
+        className="mobile-hero-height pointer-events-none fixed top-[var(--mobile-header-height)] right-0 left-0 z-[5] flex items-center justify-start px-6 md:hidden"
       >
         <div
           id="hero-ui-content"
