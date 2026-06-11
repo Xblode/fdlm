@@ -1,15 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   preventionPosters,
   rdrContent,
 } from "@/config/prevention";
 
-const SWIPE_THRESHOLD = 80;
-const STACK_OFFSET_Y = 16;
-const STACK_SCALE_STEP = 0.06;
+const POSTER_TILTS = [-4, 3, -2, 5, -3];
 
 function ShieldIcon({ className = "size-5" }: { className?: string }) {
   return (
@@ -29,182 +27,229 @@ function ShieldIcon({ className = "size-5" }: { className?: string }) {
   );
 }
 
+function TapeCorner({ className = "" }: { className?: string }) {
+  return (
+    <span
+      className={`absolute size-7 bg-brand-yellow/35 backdrop-blur-[1px] ${className}`}
+      aria-hidden="true"
+      style={{ clipPath: "polygon(0 0, 100% 0, 100% 35%, 35% 100%, 0 100%)" }}
+    />
+  );
+}
+
+function scrollToPoster(container: HTMLDivElement, index: number) {
+  const card = container.querySelector<HTMLElement>(
+    `[data-poster-index="${index}"]`,
+  );
+  if (!card) return;
+
+  const maxScroll = container.scrollWidth - container.clientWidth;
+  const target = Math.min(
+    Math.max(card.offsetLeft - (container.clientWidth - card.offsetWidth) / 2, 0),
+    maxScroll,
+  );
+
+  container.scrollTo({ left: target, behavior: "smooth" });
+}
+
 export function RdrSection() {
   const posters = preventionPosters;
+  const scrollRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [dragX, setDragX] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [exitDir, setExitDir] = useState<number>(0);
-  const touchStartXRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container || posters.length === 0) return;
+
+    const cards = container.querySelectorAll("[data-poster-index]");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+        if (!visible) return;
+
+        const index = Number(visible.target.getAttribute("data-poster-index"));
+        if (!Number.isNaN(index)) {
+          setActiveIndex(index);
+        }
+      },
+      { root: container, threshold: [0.45, 0.65, 0.85] },
+    );
+
+    cards.forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
+  }, [posters.length]);
 
   if (posters.length === 0) return null;
 
-  function handlePointerDown(e: React.PointerEvent) {
-    if (exitDir !== 0) return;
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
-    touchStartXRef.current = e.clientX;
-    setIsDragging(true);
+  const activePoster = posters[activeIndex];
+
+  function goTo(index: number) {
+    const container = scrollRef.current;
+    if (!container) return;
+    scrollToPoster(container, index);
   }
 
-  function handlePointerMove(e: React.PointerEvent) {
-    if (!isDragging || touchStartXRef.current === null) return;
-    const currentX = e.clientX;
-    setDragX(currentX - touchStartXRef.current);
+  function goPrev() {
+    goTo((activeIndex - 1 + posters.length) % posters.length);
   }
 
-  function handlePointerUp(e: React.PointerEvent) {
-    if (!isDragging) return;
-    setIsDragging(false);
-    
-    try {
-      (e.target as HTMLElement).releasePointerCapture(e.pointerId);
-    } catch {
-      // Ignorer si la capture est déjà relâchée
-    }
-
-    if (Math.abs(dragX) > SWIPE_THRESHOLD) {
-      const dir = dragX > 0 ? 1 : -1;
-      setExitDir(dir);
-      setTimeout(() => {
-        setActiveIndex((c) => (c + 1) % posters.length);
-        setDragX(0);
-        setExitDir(0);
-      }, 300);
-    } else {
-      setDragX(0);
-    }
-    touchStartXRef.current = null;
+  function goNext() {
+    goTo((activeIndex + 1) % posters.length);
   }
 
   return (
     <section
       id="rdr"
-      className="scroll-mt-[var(--mobile-header-height)] relative z-10 -mt-6 rounded-t-3xl bg-brand-black px-4 pt-8 pb-20 text-brand-yellow"
+      className="scroll-mt-[var(--mobile-header-height)] relative z-10 -mt-6 overflow-hidden rounded-t-3xl bg-brand-black px-4 pt-8 pb-20 text-brand-yellow"
     >
-      <div className="flex items-center gap-2.5">
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-brand-yellow bg-brand-yellow text-brand-black">
-          <ShieldIcon className="size-4" />
-        </span>
-        <p className="font-display text-sm tracking-[0.2em] uppercase text-brand-yellow/70">
-          {rdrContent.eyebrow}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.07]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(-45deg, transparent 0, transparent 28px, #ffdf24 28px, #ffdf24 30px)",
+        }}
+        aria-hidden="true"
+      />
+
+      <div className="relative">
+        <div className="flex items-center gap-2.5">
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-brand-yellow bg-brand-yellow text-brand-black">
+            <ShieldIcon className="size-4" />
+          </span>
+          <p className="font-display text-sm tracking-[0.2em] uppercase text-brand-yellow/70">
+            {rdrContent.eyebrow}
+          </p>
+        </div>
+
+        <h2 className="mt-3 font-display text-4xl leading-[0.95] uppercase">
+          {rdrContent.title}
+        </h2>
+
+        <p className="mt-3 max-w-prose text-sm leading-relaxed text-brand-yellow/80">
+          {rdrContent.description}
         </p>
-      </div>
 
-      <h2 className="mt-3 font-display text-4xl leading-[0.95] uppercase">
-        {rdrContent.title}
-      </h2>
+        <div className="mt-8 flex items-end justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="font-display text-[0.65rem] tracking-[0.25em] text-brand-yellow/45 uppercase">
+              Affiche {String(activeIndex + 1).padStart(2, "0")} /{" "}
+              {String(posters.length).padStart(2, "0")}
+            </p>
+            <p
+              key={activePoster.id}
+              className="mt-1 font-display text-2xl leading-none uppercase transition-opacity duration-300"
+            >
+              {activePoster.title}
+            </p>
+          </div>
 
-      <p className="mt-3 max-w-prose text-sm leading-relaxed text-brand-yellow/80">
-        {rdrContent.description}
-      </p>
+          <div className="flex shrink-0 gap-2">
+            <button
+              type="button"
+              onClick={goPrev}
+              aria-label="Affiche précédente"
+              className="inline-flex size-11 items-center justify-center rounded-full border-2 border-brand-yellow/40 text-brand-yellow transition-transform active:scale-95"
+            >
+              ←
+            </button>
+            <button
+              type="button"
+              onClick={goNext}
+              aria-label="Affiche suivante"
+              className="inline-flex size-11 items-center justify-center rounded-full border-2 border-brand-yellow bg-brand-yellow text-brand-black transition-transform active:scale-95"
+            >
+              →
+            </button>
+          </div>
+        </div>
 
-      <div className="mt-10 flex flex-col items-center">
-        <div className="relative h-[320px] w-full max-w-[20rem]">
+        <div
+          ref={scrollRef}
+          className="hide-scrollbar -mx-4 mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto px-[11vw] py-4"
+        >
           {posters.map((poster, index) => {
-            const order = (index - activeIndex + posters.length) % posters.length;
-            const isTop = order === 0;
-            const isSecond = order === 1;
-
-            let translateX = "-50%";
-            let translateY = 0;
-            let rotate = 0;
-            let scale = 1;
-            const zIndex = 10 - order;
-            let opacity = 1;
-            let transition = "transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease-out";
-
-            if (isTop) {
-              if (exitDir !== 0) {
-                translateX = `calc(-50% + ${exitDir * 400}px)`;
-                rotate = exitDir * 25;
-                opacity = 0;
-              } else {
-                translateX = `calc(-50% + ${dragX}px)`;
-                rotate = dragX * 0.06;
-                if (isDragging) {
-                  transition = "none";
-                }
-              }
-            } else {
-              const progress = (isDragging && isSecond) ? Math.min(Math.abs(dragX) / SWIPE_THRESHOLD, 1) : 0;
-              
-              const baseScale = 1 - order * STACK_SCALE_STEP;
-              const nextScale = 1 - (order - 1) * STACK_SCALE_STEP;
-              scale = baseScale + (nextScale - baseScale) * progress;
-
-              const baseY = order * STACK_OFFSET_Y;
-              const nextY = (order - 1) * STACK_OFFSET_Y;
-              translateY = baseY + (nextY - baseY) * progress;
-
-              if (order > 2) {
-                opacity = 0;
-                transition = "none";
-              }
-            }
-
-            const style: React.CSSProperties = {
-              transform: `translate(${translateX}, ${translateY}px) rotate(${rotate}deg) scale(${scale})`,
-              transformOrigin: "bottom center",
-              zIndex,
-              opacity,
-              transition,
-            };
+            const isActive = index === activeIndex;
+            const tilt = POSTER_TILTS[index % POSTER_TILTS.length];
 
             return (
-              <div
+              <article
                 key={poster.id}
-                style={style}
-                onPointerDown={isTop ? handlePointerDown : undefined}
-                onPointerMove={isTop ? handlePointerMove : undefined}
-                onPointerUp={isTop ? handlePointerUp : undefined}
-                onPointerCancel={isTop ? handlePointerUp : undefined}
-                className={`absolute bottom-6 left-1/2 block aspect-[2/3] w-[13rem] overflow-hidden rounded-2xl border-2 border-brand-yellow bg-brand-black shadow-[4px_4px_0_0_#ffdf24] will-change-transform ${
-                  isTop ? "touch-none cursor-grab active:cursor-grabbing" : "pointer-events-none"
-                }`}
+                data-poster-index={index}
+                className="w-[72vw] max-w-[16.5rem] shrink-0 snap-center"
               >
-                <Image
-                  src={poster.image}
-                  alt=""
-                  fill
-                  sizes="208px"
-                  className="pointer-events-none object-cover"
-                  draggable={false}
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-black/90 via-brand-black/60 to-transparent px-4 pt-12 pb-5">
-                  <span className="font-display block text-xl leading-none text-brand-yellow uppercase">
-                    {poster.title}
-                  </span>
-                </div>
-              </div>
+                <button
+                  type="button"
+                  onClick={() => goTo(index)}
+                  aria-label={`Voir ${poster.title}`}
+                  aria-current={isActive ? "true" : undefined}
+                  className={`relative block w-full transition-transform duration-500 ease-out active:scale-[0.98] ${
+                    isActive ? "scale-100" : "scale-[0.92] opacity-80"
+                  }`}
+                  style={{ transform: `rotate(${tilt}deg)` }}
+                >
+                  <TapeCorner className="-top-2 -left-2 rotate-[-8deg]" />
+                  <TapeCorner className="-top-2 -right-2 rotate-[98deg]" />
+
+                  <div className="relative aspect-[2/3] overflow-hidden rounded-xl border-2 border-brand-yellow bg-brand-black shadow-[6px_6px_0_0_#ffdf24]">
+                    <Image
+                      src={poster.image}
+                      alt={poster.title}
+                      fill
+                      sizes="(max-width: 767px) 72vw, 264px"
+                      className="object-cover"
+                      priority={index === 0}
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-black via-brand-black/70 to-transparent px-4 pt-16 pb-4">
+                      <span className="font-display text-3xl leading-none text-brand-yellow/20 uppercase">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              </article>
             );
           })}
         </div>
 
-        <div className="mt-2 flex items-center gap-2" aria-hidden="true">
+        <div className="mt-4 flex gap-2 overflow-x-auto hide-scrollbar pb-1">
           {posters.map((poster, index) => (
-            <div
+            <button
               key={poster.id}
-              className={`h-2 rounded-full transition-all duration-500 ${
+              type="button"
+              onClick={() => goTo(index)}
+              aria-label={`Aller à ${poster.title}`}
+              className={`relative h-14 w-10 shrink-0 overflow-hidden rounded-md border-2 transition-all duration-300 ${
                 index === activeIndex
-                  ? "w-8 bg-brand-yellow"
-                  : "w-2 bg-brand-yellow/30"
+                  ? "border-brand-yellow shadow-[2px_2px_0_0_#ffdf24]"
+                  : "border-brand-yellow/25 opacity-50"
               }`}
-            />
+            >
+              <Image
+                src={poster.image}
+                alt=""
+                fill
+                sizes="40px"
+                className="object-cover"
+              />
+            </button>
           ))}
         </div>
 
-        <p className="mt-4 text-center text-[0.65rem] tracking-[0.1em] text-brand-yellow/50 uppercase">
-          GLISSE LES CARTES SUR LE CÔTÉ
+        <p className="mt-3 text-center text-[0.65rem] tracking-[0.12em] text-brand-yellow/45 uppercase">
+          Fais défiler le mur d&apos;affiches
         </p>
-      </div>
 
-      <a
-        href={rdrContent.orderHref}
-        className="mt-10 flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 border-brand-yellow bg-brand-yellow px-5 text-center font-display text-lg tracking-wide text-brand-black uppercase transition-transform active:scale-[0.98]"
-      >
-        <ShieldIcon className="size-5" />
-        {rdrContent.orderLabel}
-      </a>
+        <a
+          href={rdrContent.orderHref}
+          className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 border-brand-yellow bg-brand-yellow px-5 text-center font-display text-lg tracking-wide text-brand-black uppercase transition-transform active:scale-[0.98]"
+        >
+          <ShieldIcon className="size-5" />
+          {rdrContent.orderLabel}
+        </a>
+      </div>
     </section>
   );
 }
