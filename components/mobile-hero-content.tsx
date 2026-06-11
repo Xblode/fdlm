@@ -39,6 +39,7 @@ export function MobileHeroContent() {
           id="hero-ui-content"
           className="pointer-events-auto flex w-full max-w-[19rem] flex-col items-start gap-6"
         >
+          <HeroProgramActions />
           <div className="inline-grid shrink-0 text-brand-yellow drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
             <p className="w-full text-left font-display text-[4.875rem] leading-[0.85] uppercase">
               {eventInfo.dateShort}
@@ -47,7 +48,6 @@ export function MobileHeroContent() {
               2026
             </p>
           </div>
-          <HeroProgramActions />
         </div>
       </div>
     </>
