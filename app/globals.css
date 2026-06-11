@@ -37,9 +37,7 @@
   height: calc(var(--mobile-vh, 100svh) - var(--mobile-header-height));
 }
 
-#hero.hero-inactive,
-#hero-ui.hero-inactive,
-#hero-frame.hero-inactive {
+#hero-root.hero-inactive {
   visibility: hidden;
   pointer-events: none !important;
 }
