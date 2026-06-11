@@ -58,13 +58,13 @@ export function RdrSection() {
   return (
     <section
       id="rdr"
-      className="scroll-mt-[var(--mobile-header-height)] relative z-10 -mt-6 rounded-t-3xl bg-brand-yellow px-4 pt-8 pb-20 text-brand-black"
+      className="scroll-mt-[var(--mobile-header-height)] relative z-10 -mt-6 rounded-t-3xl bg-brand-black px-4 pt-8 pb-20 text-brand-yellow"
     >
       <div className="flex items-center gap-2.5">
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-brand-black bg-brand-black text-brand-yellow">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-brand-yellow bg-brand-yellow text-brand-black">
           <ShieldIcon className="size-4" />
         </span>
-        <p className="font-display text-sm tracking-[0.2em] uppercase text-brand-black/70">
+        <p className="font-display text-sm tracking-[0.2em] uppercase text-brand-yellow/70">
           {rdrContent.eyebrow}
         </p>
       </div>
@@ -73,7 +73,7 @@ export function RdrSection() {
         {rdrContent.title}
       </h2>
 
-      <p className="mt-3 max-w-prose text-sm leading-relaxed text-brand-black/80">
+      <p className="mt-3 max-w-prose text-sm leading-relaxed text-brand-yellow/80">
         {rdrContent.description}
       </p>
 
@@ -112,7 +112,7 @@ export function RdrSection() {
                 onClick={() => setActiveIndex(index)}
                 style={style}
                 aria-label={`Voir l'affiche ${poster.title}`}
-                className={`absolute bottom-0 left-1/2 block aspect-[2/3] w-[11rem] overflow-hidden rounded-2xl border-2 border-brand-black bg-white shadow-[4px_4px_0_0_#0a0a0a] transition-all duration-500 ease-out will-change-transform ${
+                className={`absolute bottom-0 left-1/2 block aspect-[2/3] w-[11rem] overflow-hidden rounded-2xl border-2 border-brand-yellow bg-brand-black shadow-[4px_4px_0_0_#ffdf24] transition-all duration-500 ease-out will-change-transform ${
                   isActive ? "cursor-default" : "cursor-pointer brightness-90 hover:brightness-100 hover:-translate-y-2"
                 }`}
               >
@@ -141,21 +141,21 @@ export function RdrSection() {
               onClick={() => setActiveIndex(index)}
               className={`h-2 rounded-full transition-all duration-500 ${
                 index === activeIndex
-                  ? "w-8 bg-brand-black"
-                  : "w-2 bg-brand-black/20"
+                  ? "w-8 bg-brand-yellow"
+                  : "w-2 bg-brand-yellow/30"
               }`}
             />
           ))}
         </div>
 
-        <p className="mt-4 text-center text-[0.65rem] tracking-[0.1em] text-brand-black/50 uppercase">
+        <p className="mt-4 text-center text-[0.65rem] tracking-[0.1em] text-brand-yellow/50 uppercase">
           {rdrContent.hint}
         </p>
       </div>
 
       <a
         href={rdrContent.orderHref}
-        className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 border-brand-black bg-brand-black px-5 text-center font-display text-lg tracking-wide text-brand-yellow uppercase shadow-[4px_4px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
+        className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 border-brand-yellow bg-brand-yellow px-5 text-center font-display text-lg tracking-wide text-brand-black uppercase transition-transform active:scale-[0.98]"
       >
         <ShieldIcon className="size-5" />
         {rdrContent.orderLabel}
