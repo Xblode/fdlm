@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { eventInfo } from "@/config/event";
 import { HeroProgramActions } from "@/components/hero-program-actions";
+import { HeroCountdown } from "@/components/hero-countdown";
 
 export function MobileHeroContent() {
   return (
@@ -45,17 +45,7 @@ export function MobileHeroContent() {
             className="pointer-events-auto flex w-full max-w-[19rem] flex-col items-start gap-6"
           >
             <HeroProgramActions />
-            <div
-              className="inline-grid shrink-0 text-brand-yellow drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]"
-              aria-hidden="false"
-            >
-              <p className="w-full text-left font-display text-[4.875rem] leading-[0.85] uppercase">
-                {eventInfo.dateShort}
-              </p>
-              <p className="-mt-2 w-full text-left font-year text-8xl leading-[0.85] uppercase tracking-tight">
-                2026
-              </p>
-            </div>
+            <HeroCountdown />
           </div>
         </div>
       </div>
