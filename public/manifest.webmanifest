@@ -1,0 +1,24 @@
+{
+  "name": "Fête de la musique 2026",
+  "short_name": "FDLM 2026",
+  "description": "Agenda, lieux et artistes — Fête de la musique 2026",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffdf24",
+  "theme_color": "#ffdf24",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

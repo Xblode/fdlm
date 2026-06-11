@@ -3,13 +3,95 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --mobile-header-height: 4rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand-yellow: #ffdf24;
+  --color-brand-black: #0a0a0a;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+.font-display {
+  font-family: var(--font-display), Arial, Helvetica, sans-serif;
+}
+
+.font-year {
+  font-family: var(--font-year), var(--font-display), Arial, Helvetica,
+    sans-serif;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-hero-height {
+  height: calc(var(--mobile-vh, 100svh) - var(--mobile-header-height));
+}
+
+#hero.hero-inactive,
+#hero-ui.hero-inactive,
+#hero-frame.hero-inactive {
+  visibility: hidden;
+  pointer-events: none !important;
+}
+
+#hero-ui-content {
+  will-change: transform;
+  transform: translate3d(0, var(--hero-ui-content-y, 0px), 0);
+}
+
+button,
+a {
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hero-visuel-drift {
+  will-change: transform;
+  transform: scale(0.9)
+    translate3d(var(--hero-visuel-x, 0), var(--hero-visuel-y, 0), 0);
+}
+
+.hero-visuel-float {
+  animation: hero-visuel-float 6.5s infinite;
+  will-change: transform;
+}
+
+@keyframes hero-visuel-float {
+  0% {
+    transform: translate3d(0, 1.4%, 0);
+    animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  }
+
+  54% {
+    transform: translate3d(0, -1.4%, 0);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.82, 0.9);
+  }
+
+  100% {
+    transform: translate3d(0, 1.4%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-visuel-float {
+    animation: none;
+    transform: none;
+  }
+
+  #hero-ui-content {
+    transform: none;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -19,8 +101,123 @@
   }
 }
 
+html {
+  min-height: 100%;
+}
+
 body {
+  min-height: var(--mobile-vh, 100svh);
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@media (max-width: 767px) {
+  html {
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html::-webkit-scrollbar {
+    display: none;
+  }
+
+  body {
+    overflow-y: visible;
+    height: auto;
+  }
+
+  .mobile-app {
+    background-color: #0088bb;
+    background-image: url("/fond-0.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .mobile-edge-side {
+    top: calc(var(--mobile-header-height) - var(--mobile-vh, 100svh));
+    height: calc(
+      var(--mobile-vh, 100svh) - var(--mobile-header-height) +
+        (var(--mobile-vh, 100svh) * 2)
+    );
+    width: calc(var(--mobile-vh, 100svh) * 3508 / 4961);
+    background-size: auto var(--mobile-vh, 100svh);
+    background-repeat: repeat-y;
+    will-change: background-position;
+  }
+
+  .mobile-edge-side--left {
+    left: clamp(-1.6rem, -5vw, -0.9rem);
+    background-image: url("/visuel 2 gauche.png");
+    background-position: left calc(-0.5 * var(--page-scroll-y, 0px));
+  }
+
+  .mobile-edge-side--right {
+    right: clamp(-1.6rem, -5vw, -0.9rem);
+    background-image: url("/visuel 2 droite.png");
+    background-position: right calc(0.5 * var(--page-scroll-y, 0px));
+  }
+
+  .mobile-edge-side--right::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("/visuel 2 droite.png");
+    background-size: auto var(--mobile-vh, 100svh);
+    background-repeat: repeat-y;
+    background-position: right calc(0.5 * var(--page-scroll-y, 0px));
+    transform: scaleX(-1);
+    transform-origin: right center;
+    pointer-events: none;
+    -webkit-mask-image: repeating-linear-gradient(
+      to bottom,
+      #000 0,
+      #000 calc(var(--mobile-vh, 100svh) / 2),
+      transparent calc(var(--mobile-vh, 100svh) / 2),
+      transparent var(--mobile-vh, 100svh)
+    );
+    mask-image: repeating-linear-gradient(
+      to bottom,
+      #000 0,
+      #000 calc(var(--mobile-vh, 100svh) / 2),
+      transparent calc(var(--mobile-vh, 100svh) / 2),
+      transparent var(--mobile-vh, 100svh)
+    );
+    -webkit-mask-size: 100% var(--mobile-vh, 100svh);
+    mask-size: 100% var(--mobile-vh, 100svh);
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .mobile-edge-side--left {
+      animation: edge-parallax-left linear both;
+      animation-timeline: scroll(root);
+      background-position: left 0;
+    }
+
+    .mobile-edge-side--right {
+      animation: edge-parallax-right linear both;
+      animation-timeline: scroll(root);
+      background-position: right 0;
+    }
+
+    .mobile-edge-side--right::after {
+      animation: edge-parallax-right linear both;
+      animation-timeline: scroll(root);
+      background-position: right 0;
+    }
+  }
+}
+
+@keyframes edge-parallax-left {
+  to {
+    background-position: left -40vh;
+  }
+}
+
+@keyframes edge-parallax-right {
+  to {
+    background-position: right 40vh;
+  }
 }

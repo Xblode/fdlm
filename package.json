@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
+    "dev:mobile": "node scripts/dev-mobile.mjs",
+    "mobile:url": "node scripts/show-mobile-url.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
