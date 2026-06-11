@@ -151,12 +151,23 @@ body {
     height: auto;
   }
 
-  .mobile-app {
+  /* Sur mobile, background-attachment: fixed lag énormément sur iOS Safari. 
+     L'astuce ultra-performante est un pseudo-élément en position: fixed */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
     background-color: #0088bb;
     background-image: url("/fond-0.webp");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    pointer-events: none;
+  }
+
+  .mobile-app {
+    /* Le fond est géré par body::before maintenant */
   }
 
   .mobile-edge-side {
