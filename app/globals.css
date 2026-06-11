@@ -42,6 +42,20 @@
   pointer-events: none !important;
 }
 
+.hero-btn-arrow {
+  display: inline-block;
+  animation: hero-btn-arrow 1.3s ease-in-out infinite;
+}
+
+@keyframes hero-btn-arrow {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(6px);
+  }
+}
+
 button,
 a {
   touch-action: manipulation;
