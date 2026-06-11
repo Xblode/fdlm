@@ -44,33 +44,26 @@ export function HeroCountdown() {
   }
 
   const units = [
-    { value: timeLeft.days, label: "J" },
-    { value: timeLeft.hours, label: "H" },
-    { value: timeLeft.minutes, label: "M" },
-    { value: timeLeft.seconds, label: "S" },
+    { value: timeLeft.days, label: "j" },
+    { value: timeLeft.hours, label: "h" },
+    { value: timeLeft.minutes, label: "m" },
+    { value: timeLeft.seconds, label: "s" },
   ];
 
   return (
     <div
-      className="flex items-end gap-1 text-brand-yellow drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]"
+      className="flex items-baseline gap-2.5 text-brand-yellow drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]"
       aria-label={`Compte à rebours : ${timeLeft.days} jours, ${timeLeft.hours} heures, ${timeLeft.minutes} minutes, ${timeLeft.seconds} secondes`}
       aria-live="off"
     >
-      {units.map(({ value, label }, i) => (
-        <div key={label} className="flex items-end">
-          <div className="flex flex-col items-center leading-none">
-            <span className="font-year text-[3.75rem] leading-[0.88] tabular-nums tracking-tight">
-              {pad(value)}
-            </span>
-            <span className="font-display text-[0.6rem] tracking-[0.2em] opacity-70 uppercase">
-              {label}
-            </span>
-          </div>
-          {i < units.length - 1 && (
-            <span className="mb-[1.65rem] px-0.5 font-year text-[1.5rem] leading-none opacity-50">
-              :
-            </span>
-          )}
+      {units.map(({ value, label }) => (
+        <div key={label} className="flex items-baseline">
+          <span className="font-year text-[4.2rem] leading-[0.85] tabular-nums tracking-tight">
+            {pad(value)}
+          </span>
+          <span className="ml-0.5 font-display text-2xl opacity-90 uppercase">
+            {label}
+          </span>
         </div>
       ))}
     </div>
