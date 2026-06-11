@@ -4,9 +4,6 @@ import { useEffect } from "react";
 
 const HERO_VISUEL_MAX_X = 6;
 const HERO_VISUEL_MAX_Y = -2.5;
-const HERO_UI_CONTENT_LAG = 0.55;
-const HERO_UI_CONTENT_DELAY_RATIO = 0.12;
-const HERO_UI_CONTENT_MAX_RATIO = 0.45;
 
 // Fraction of hero height at which the snap commits (38 % = seuil d'ancrage)
 const SNAP_THRESHOLD = 0.38;
@@ -39,7 +36,6 @@ export function PageScrollController() {
     const hero = document.getElementById("hero");
     const heroUi = document.getElementById("hero-ui");
     const heroFrame = document.getElementById("hero-frame");
-    const heroUiContent = document.getElementById("hero-ui-content");
     const heroSpacer = document.getElementById("hero-spacer");
 
     let raf = 0;
@@ -134,7 +130,6 @@ export function PageScrollController() {
       if (reducedMotion) {
         hero.style.setProperty("--hero-visuel-x", "0%");
         hero.style.setProperty("--hero-visuel-y", "0%");
-        heroUiContent?.style.setProperty("--hero-ui-content-y", "0px");
         return;
       }
 
@@ -146,19 +141,6 @@ export function PageScrollController() {
       hero.style.setProperty(
         "--hero-visuel-y",
         `${progress * HERO_VISUEL_MAX_Y}%`,
-      );
-
-      const delayedScroll = Math.max(
-        0,
-        scrollY - height * HERO_UI_CONTENT_DELAY_RATIO,
-      );
-      const contentOffset = Math.min(
-        delayedScroll * HERO_UI_CONTENT_LAG,
-        height * HERO_UI_CONTENT_MAX_RATIO,
-      );
-      heroUiContent?.style.setProperty(
-        "--hero-ui-content-y",
-        `${contentOffset}px`,
       );
     };
 
@@ -223,7 +205,6 @@ export function PageScrollController() {
       heroFrame?.classList.remove("hero-inactive");
       hero?.style.removeProperty("--hero-visuel-x");
       hero?.style.removeProperty("--hero-visuel-y");
-      heroUiContent?.style.removeProperty("--hero-ui-content-y");
     };
   }, []);
 

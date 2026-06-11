@@ -38,14 +38,14 @@ export function HeroProgramActions() {
         <button
           type="button"
           onClick={handleCreateProgram}
-          className="w-full rounded-full bg-brand-yellow px-4 py-2 text-left font-display text-xl leading-tight tracking-wide text-brand-black uppercase transition-transform active:scale-[0.98]"
+          className="w-full rounded-full border-2 border-brand-black bg-brand-yellow px-4 py-2 text-left font-display text-xl leading-tight tracking-wide text-brand-black uppercase shadow-[3px_3px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
         >
           Créer mon programme
         </button>
         <button
           type="button"
           onClick={handleRandomPick}
-          className="w-full rounded-full border-2 border-brand-yellow px-4 py-2 text-left font-display text-xl leading-tight tracking-wide text-brand-yellow uppercase transition-transform active:scale-[0.98]"
+          className="w-full rounded-full border-2 border-brand-yellow bg-brand-black px-4 py-2 text-left font-display text-xl leading-tight tracking-wide text-brand-yellow uppercase transition-transform active:scale-[0.98]"
         >
           Proposer un truc aléatoire
         </button>

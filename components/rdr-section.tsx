@@ -214,34 +214,6 @@ export function RdrSection() {
           })}
         </div>
 
-        <div className="mt-4 flex gap-2 overflow-x-auto hide-scrollbar pb-1">
-          {posters.map((poster, index) => (
-            <button
-              key={poster.id}
-              type="button"
-              onClick={() => goTo(index)}
-              aria-label={`Aller à ${poster.title}`}
-              className={`relative h-14 w-10 shrink-0 overflow-hidden rounded-md border-2 transition-all duration-300 ${
-                index === activeIndex
-                  ? "border-brand-yellow shadow-[2px_2px_0_0_#ffdf24]"
-                  : "border-brand-yellow/25 opacity-50"
-              }`}
-            >
-              <Image
-                src={poster.image}
-                alt=""
-                fill
-                sizes="40px"
-                className="object-cover"
-              />
-            </button>
-          ))}
-        </div>
-
-        <p className="mt-3 text-center text-[0.65rem] tracking-[0.12em] text-brand-yellow/45 uppercase">
-          Fais défiler le mur d&apos;affiches
-        </p>
-
         <a
           href={rdrContent.orderHref}
           className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 border-brand-yellow bg-brand-yellow px-5 text-center font-display text-lg tracking-wide text-brand-black uppercase transition-transform active:scale-[0.98]"

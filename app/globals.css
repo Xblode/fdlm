@@ -44,11 +44,6 @@
   pointer-events: none !important;
 }
 
-#hero-ui-content {
-  will-change: transform;
-  transform: translate3d(0, var(--hero-ui-content-y, 0px), 0);
-}
-
 button,
 a {
   touch-action: manipulation;
@@ -86,10 +81,6 @@ a {
 @media (prefers-reduced-motion: reduce) {
   .hero-visuel-float {
     animation: none;
-    transform: none;
-  }
-
-  #hero-ui-content {
     transform: none;
   }
 }
