@@ -44,6 +44,7 @@
 
 .hero-btn-arrow {
   display: inline-block;
+  will-change: transform;
   animation: hero-btn-arrow 1.3s ease-in-out infinite;
 }
 
@@ -65,28 +66,44 @@ a {
 
 .hero-visuel-drift {
   will-change: transform;
-  transform: scale(0.9)
-    translate3d(var(--hero-visuel-x, 0), var(--hero-visuel-y, 0), 0);
+  /* État initial — JS overrides via style.transform sur les anciens navigateurs */
+  transform: scale(0.9) translate3d(0, 0, 0);
 }
 
+/* Sur les navigateurs modernes (iOS 16+, Chrome 115+) : parallaxe 100% CSS,
+   zéro JS, entièrement sur le compositor thread */
+@supports (animation-timeline: scroll()) {
+  .hero-visuel-drift {
+    animation-name: hero-visuel-drift-scroll;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: scroll(root);
+    animation-range: 0px calc(100svh - 4rem);
+  }
+}
+
+@keyframes hero-visuel-drift-scroll {
+  from {
+    transform: scale(0.9) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(0.9) translate3d(6%, -2.5%, 0);
+  }
+}
+
+/* Float : une seule couche GPU suffit (pas de will-change explicite ici,
+   le parent composited absorbe l'animation) */
 .hero-visuel-float {
-  animation: hero-visuel-float 6.5s infinite;
-  will-change: transform;
+  animation: hero-visuel-float 6.5s ease-in-out infinite;
 }
 
 @keyframes hero-visuel-float {
-  0% {
-    transform: translate3d(0, 1.4%, 0);
-    animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-  }
-
-  54% {
-    transform: translate3d(0, -1.4%, 0);
-    animation-timing-function: cubic-bezier(0.5, 0, 0.82, 0.9);
-  }
-
+  0%,
   100% {
     transform: translate3d(0, 1.4%, 0);
+  }
+  50% {
+    transform: translate3d(0, -1.4%, 0);
   }
 }
 
@@ -94,6 +111,9 @@ a {
   .hero-visuel-float {
     animation: none;
     transform: none;
+  }
+  .hero-btn-arrow {
+    animation: none;
   }
 }
 

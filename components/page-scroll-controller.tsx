@@ -15,7 +15,15 @@ export function PageScrollController() {
 
     if (!heroRoot || !spacer) return;
 
-    // ── Masquer le hero quand le spacer sort du viewport ──────────────────
+    const driftEl = heroRoot.querySelector<HTMLElement>(".hero-visuel-drift");
+
+    // CSS scroll-driven animations handle parallax natively on modern browsers
+    const useNativeScrollAnim = CSS.supports("animation-timeline: scroll()");
+
+    // Cache spacer height — avoids layout thrashing on every scroll event
+    let spacerHeight = spacer.offsetHeight || 1;
+
+    // ── Visibility toggle via IntersectionObserver ──────────────────────
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
         heroRoot.classList.toggle("hero-inactive", !entry.isIntersecting);
@@ -24,24 +32,24 @@ export function PageScrollController() {
     );
     visibilityObserver.observe(spacer);
 
-    // ── Parallaxe visuel (CSS var mise à jour au scroll) ──────────────────
+    // ── Parallax + edge parallax CSS var (fallback only) ─────────────────
     const onScroll = () => {
       const scrollY = window.scrollY;
-      root.style.setProperty("--page-scroll-y", `${scrollY}px`);
 
-      const height = spacer.offsetHeight || 1;
-      const progress = Math.min(Math.max(scrollY / height, 0), 1);
-      heroRoot.style.setProperty(
-        "--hero-visuel-x",
-        `${progress * HERO_VISUEL_MAX_X}%`,
-      );
-      heroRoot.style.setProperty(
-        "--hero-visuel-y",
-        `${progress * HERO_VISUEL_MAX_Y}%`,
-      );
+      if (!useNativeScrollAnim) {
+        // Edge parallax fallback (CSS scroll-driven handles it on modern browsers)
+        root.style.setProperty("--page-scroll-y", `${scrollY}px`);
+
+        // Hero visuel parallax: update transform directly — compositor-only,
+        // avoids style recalculation that CSS vars would trigger
+        if (driftEl) {
+          const progress = Math.min(Math.max(scrollY / spacerHeight, 0), 1);
+          driftEl.style.transform = `scale(0.9) translate3d(${progress * HERO_VISUEL_MAX_X}%, ${progress * HERO_VISUEL_MAX_Y}%, 0)`;
+        }
+      }
     };
 
-    // ── Snap au touchend ──────────────────────────────────────────────────
+    // ── Snap at touchend ──────────────────────────────────────────────────
     let isSnapping = false;
     let velY = 0;
     let prevClientY = 0;
@@ -76,26 +84,24 @@ export function PageScrollController() {
     };
 
     const onTouchEnd = () => {
-      if (isSnapping || !spacer) return;
+      if (isSnapping) return;
       const scrollY = window.scrollY;
-      const height = spacer.offsetHeight || 1;
-      if (scrollY <= 2 || scrollY >= height - 2) return;
-
+      if (scrollY <= 2 || scrollY >= spacerHeight - 2) return;
       const predicted = Math.min(
         1,
-        Math.max(0, (scrollY + velY * 250) / height),
+        Math.max(0, (scrollY + velY * 250) / spacerHeight),
       );
       let goDown: boolean;
       if (velY > SNAP_VEL_MIN) goDown = true;
       else if (velY < -SNAP_VEL_MIN) goDown = false;
       else goDown = predicted >= SNAP_THRESHOLD;
-
-      snapTo(goDown ? height : 0);
+      snapTo(goDown ? spacerHeight : 0);
     };
 
-    // ── Réorientation et visibilité ───────────────────────────────────────
-    const onOrientationChange = () => {
-      window.setTimeout(onScroll, 150);
+    // Update cached height on resize / orientation change
+    const onResize = () => {
+      spacerHeight = spacer.offsetHeight || 1;
+      onScroll();
     };
 
     onScroll();
@@ -105,7 +111,7 @@ export function PageScrollController() {
     window.addEventListener("touchmove", onTouchMove, { passive: true });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
     window.addEventListener("touchcancel", onTouchEnd, { passive: true });
-    window.addEventListener("orientationchange", onOrientationChange);
+    window.addEventListener("resize", onResize, { passive: true });
 
     return () => {
       visibilityObserver.disconnect();
@@ -114,11 +120,10 @@ export function PageScrollController() {
       window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("touchcancel", onTouchEnd);
-      window.removeEventListener("orientationchange", onOrientationChange);
+      window.removeEventListener("resize", onResize);
       root.style.removeProperty("--page-scroll-y");
       heroRoot.classList.remove("hero-inactive");
-      heroRoot.style.removeProperty("--hero-visuel-x");
-      heroRoot.style.removeProperty("--hero-visuel-y");
+      driftEl?.style.removeProperty("transform");
     };
   }, []);
 
