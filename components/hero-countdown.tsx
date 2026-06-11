@@ -61,7 +61,7 @@ export function HeroCountdown() {
           <span className="font-year text-[4.2rem] leading-[0.85] tabular-nums tracking-tight">
             {pad(value)}
           </span>
-          <span className="ml-0.5 font-display text-2xl opacity-90 uppercase">
+          <span className="ml-0.5 font-display text-2xl uppercase">
             {label}
           </span>
         </div>
