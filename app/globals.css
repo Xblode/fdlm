@@ -168,79 +168,48 @@ body {
     width: calc(var(--mobile-vh, 100svh) * 3508 / 4961);
     background-size: auto var(--mobile-vh, 100svh);
     background-repeat: repeat-y;
-    will-change: background-position;
+    will-change: transform;
   }
 
   .mobile-edge-side--left {
     left: clamp(-1.6rem, -5vw, -0.9rem);
     background-image: url("/visuel 2 gauche.webp");
-    background-position: left calc(-0.5 * var(--page-scroll-y, 0px));
+    background-position: left top;
+    transform: translateY(calc(-0.5 * var(--page-scroll-y, 0px)));
   }
 
   .mobile-edge-side--right {
     right: clamp(-1.6rem, -5vw, -0.9rem);
     background-image: url("/visuel 2 droite.webp");
-    background-position: right calc(0.5 * var(--page-scroll-y, 0px));
+    background-position: right top;
+    transform: translateY(calc(0.5 * var(--page-scroll-y, 0px)));
   }
 
-  .mobile-edge-side--right::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url("/visuel 2 droite.webp");
-    background-size: auto var(--mobile-vh, 100svh);
-    background-repeat: repeat-y;
-    background-position: right calc(0.5 * var(--page-scroll-y, 0px));
-    transform: scaleX(-1);
-    transform-origin: right center;
-    pointer-events: none;
-    -webkit-mask-image: repeating-linear-gradient(
-      to bottom,
-      #000 0,
-      #000 calc(var(--mobile-vh, 100svh) / 2),
-      transparent calc(var(--mobile-vh, 100svh) / 2),
-      transparent var(--mobile-vh, 100svh)
-    );
-    mask-image: repeating-linear-gradient(
-      to bottom,
-      #000 0,
-      #000 calc(var(--mobile-vh, 100svh) / 2),
-      transparent calc(var(--mobile-vh, 100svh) / 2),
-      transparent var(--mobile-vh, 100svh)
-    );
-    -webkit-mask-size: 100% var(--mobile-vh, 100svh);
-    mask-size: 100% var(--mobile-vh, 100svh);
-  }
 
   @supports (animation-timeline: scroll()) {
     .mobile-edge-side--left {
       animation: edge-parallax-left linear both;
       animation-timeline: scroll(root);
-      background-position: left 0;
+      transform: translateY(0);
     }
 
     .mobile-edge-side--right {
       animation: edge-parallax-right linear both;
       animation-timeline: scroll(root);
-      background-position: right 0;
+      transform: translateY(0);
     }
 
-    .mobile-edge-side--right::after {
-      animation: edge-parallax-right linear both;
-      animation-timeline: scroll(root);
-      background-position: right 0;
-    }
   }
 }
 
 @keyframes edge-parallax-left {
   to {
-    background-position: left -40vh;
+    transform: translateY(-40vh);
   }
 }
 
 @keyframes edge-parallax-right {
   to {
-    background-position: right 40vh;
+    transform: translateY(40vh);
   }
 }

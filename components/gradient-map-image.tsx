@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useMemo } from "react";
+import Image from "next/image";
 
 export type GradientMapStop = {
   offset: number;
@@ -151,10 +152,12 @@ export function GradientMapImage({
         </defs>
       </svg>
 
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={src}
         alt={alt}
+        fill
+        sizes="(max-width: 767px) 100vw, 384px"
+        quality={60}
         className={className}
         style={{ filter: `url(#${filterId})` }}
       />

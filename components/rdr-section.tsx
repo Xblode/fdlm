@@ -198,6 +198,7 @@ export function RdrSection() {
                       src={poster.image}
                       alt={poster.title}
                       fill
+                      quality={60}
                       sizes="(max-width: 767px) 72vw, 264px"
                       className="object-cover"
                       priority={index === 0}

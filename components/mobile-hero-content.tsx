@@ -19,6 +19,7 @@ export function MobileHeroContent() {
                 alt=""
                 priority
                 fill
+                quality={60}
                 sizes="100vw"
                 className="object-cover object-top"
               />
@@ -33,6 +34,7 @@ export function MobileHeroContent() {
             alt=""
             priority
             fill
+            quality={60}
             sizes="100vw"
             className="h-full w-full object-fill"
           />
