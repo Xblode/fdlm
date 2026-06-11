@@ -38,14 +38,14 @@ export function MobileHeroContent() {
           />
         </div>
 
-        {/* UI : boutons + date */}
-        <div className="pointer-events-none absolute inset-0 flex items-end justify-start px-6 pb-14">
+        {/* UI : chrono + bouton, centré */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6">
           <div
             id="hero-ui-content"
-            className="pointer-events-auto flex w-full max-w-[19rem] flex-col items-start gap-6"
+            className="pointer-events-auto flex w-full max-w-[19rem] flex-col items-center gap-6"
           >
-            <HeroProgramActions />
             <HeroCountdown />
+            <HeroProgramActions />
           </div>
         </div>
       </div>
