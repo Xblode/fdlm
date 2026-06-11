@@ -117,6 +117,24 @@ a {
   }
 }
 
+/* Filtre SVG partagé — desktop uniquement (trop coûteux sur mobile) */
+@media (min-width: 768px) {
+  .venue-card-gradient-map {
+    filter: url(#venue-gradient-map);
+  }
+}
+
+/* Approximation légère du gradient map sur mobile */
+.venue-card-gradient-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 210, 0, 0.45) 0%,
+    rgba(255, 35, 31, 0.35) 45%,
+    rgba(34, 34, 34, 0.55) 100%
+  );
+  mix-blend-mode: multiply;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

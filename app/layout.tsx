@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Bebas_Neue, Geist, Geist_Mono } from "next/font/google";
+import { SharedGradientFilter } from "@/components/shared-gradient-filter";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -54,7 +55,10 @@ export default function RootLayout({
       lang="fr"
       className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${anton.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <SharedGradientFilter />
+        {children}
+      </body>
     </html>
   );
 }

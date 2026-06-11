@@ -298,7 +298,8 @@ export function LocationSection({
         window.scrollY -
         header.getBoundingClientRect().height;
 
-      window.scrollTo({ top, behavior: "smooth" });
+      // Scroll instantané : le smooth scroll + remontage du DOM lag sur mobile
+      window.scrollTo({ top, behavior: "auto" });
     });
   }, [selectedVenue]);
 
@@ -364,53 +365,53 @@ export function LocationSection({
         <div id="venue-detail" className="pt-2">
           <VenueDetail venue={selectedVenue} />
         </div>
-      ) : (
-        <>
-          <div className="mt-2">
-            <FeaturedCarousel artists={filteredArtists} />
-          </div>
+      ) : null}
 
-          <div
-            id="location-venues-list"
-            className="mt-2 mb-5 flex scroll-mt-[calc(var(--mobile-header-height)+7rem)] items-center gap-3"
-          >
-            <Image
-              src="/1x/Fichier 4.webp"
-              alt=""
-              width={49}
-              height={49}
-              className="h-5 w-auto shrink-0 object-contain"
-              aria-hidden
+      <div hidden={selectedVenue !== null}>
+        <div className="mt-2">
+          <FeaturedCarousel artists={filteredArtists} />
+        </div>
+
+        <div
+          id="location-venues-list"
+          className="mt-2 mb-5 flex scroll-mt-[calc(var(--mobile-header-height)+7rem)] items-center gap-3"
+        >
+          <Image
+            src="/1x/Fichier 4.webp"
+            alt=""
+            width={49}
+            height={49}
+            className="h-5 w-auto shrink-0 object-contain"
+            aria-hidden
+          />
+          <h2 className="font-display text-3xl leading-none uppercase">
+            Lieux
+          </h2>
+        </div>
+
+        {filteredVenues.length > 0 ? (
+          <>
+            <div className="flex flex-col gap-5">
+              {paginatedVenues.map((venue) => (
+                <VenueCard
+                  key={venue.id}
+                  venue={venue}
+                  onSelect={() => selectVenue(venue)}
+                />
+              ))}
+            </div>
+            <VenuePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={goToPage}
             />
-            <h2 className="font-display text-3xl leading-none uppercase">
-              Lieux
-            </h2>
-          </div>
-
-          {filteredVenues.length > 0 ? (
-            <>
-              <div className="flex flex-col gap-5">
-                {paginatedVenues.map((venue) => (
-                  <VenueCard
-                    key={venue.id}
-                    venue={venue}
-                    onSelect={() => selectVenue(venue)}
-                  />
-                ))}
-              </div>
-              <VenuePagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={goToPage}
-              />
-            </>
-          ) : (
-            <p className="rounded-2xl border-2 border-dashed border-brand-black/30 bg-white px-4 py-8 text-center font-display text-xl uppercase">
-              Aucun résultat
-            </p>
-          )}
-        </>
-      )}
+          </>
+        ) : (
+          <p className="rounded-2xl border-2 border-dashed border-brand-black/30 bg-white px-4 py-8 text-center font-display text-xl uppercase">
+            Aucun résultat
+          </p>
+        )}
+      </div>
     </section>
   );
 }
