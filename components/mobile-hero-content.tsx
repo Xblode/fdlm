@@ -23,7 +23,7 @@ export function MobileHeroContent() {
         aria-hidden="true"
       >
         <Image
-          src="/contenu 2.png"
+          src="/contenu 2.webp"
           alt="Fête de la musique — L'eau tarie, 21 juin 2026"
           priority
           fill

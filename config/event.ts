@@ -22,7 +22,7 @@ export const venues: Venue[] = [
     hoursEnd: "00H00",
     musicStyles: ["Techno", "House", "Electro", "Minimal"],
     mapsUrl: "https://maps.google.com/?q=L'eau+tarie",
-    cardImage: "/R.jpg",
+    cardImage: "/R.webp",
   },
   {
     id: "le-tetris",
@@ -34,7 +34,7 @@ export const venues: Venue[] = [
     hoursEnd: "01H00",
     musicStyles: ["Rock", "Indie", "Pop"],
     mapsUrl: "https://maps.google.com/?q=Le+Tetris+Le+Havre",
-    cardImage: "/Tetris.jpg",
+    cardImage: "/Tetris.webp",
   },
   {
     id: "le-news",

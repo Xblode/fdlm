@@ -33,7 +33,7 @@ function FeaturedArtistCard({ artist }: { artist: Artist }) {
   }
 
   return (
-    <article className="relative aspect-square w-[42vw] max-w-[11rem] shrink-0 snap-start overflow-hidden rounded-2xl border-2 border-brand-black bg-[url('/fond-0.png')] bg-cover bg-center text-left shadow-[4px_4px_0_0_#0a0a0a]">
+    <article className="relative aspect-square w-[42vw] max-w-[11rem] shrink-0 snap-start overflow-hidden rounded-2xl border-2 border-brand-black bg-[url('/fond-0.webp')] bg-cover bg-center text-left shadow-[4px_4px_0_0_#0a0a0a]">
       <div className="flex h-full flex-col p-4">
         <span className="font-display w-fit rounded-full bg-brand-black px-2.5 py-1 text-[0.65rem] tracking-[0.15em] text-brand-yellow uppercase">
           {artist.genre}
@@ -76,7 +76,7 @@ export function FeaturedCarousel({ artists }: FeaturedCarouselProps) {
     <div className="mb-10">
       <div className="mb-2 flex items-center gap-3">
         <Image
-          src="/1x/Fichier 2.png"
+          src="/1x/Fichier 2.webp"
           alt=""
           width={44}
           height={49}

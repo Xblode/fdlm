@@ -40,7 +40,7 @@
 #hero.hero-inactive,
 #hero-ui.hero-inactive,
 #hero-frame.hero-inactive {
-  visibility: hidden;
+  opacity: 0;
   pointer-events: none !important;
 }
 
@@ -130,7 +130,7 @@ body {
 
   .mobile-app {
     background-color: #0088bb;
-    background-image: url("/fond-0.png");
+    background-image: url("/fond-0.webp");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -150,13 +150,13 @@ body {
 
   .mobile-edge-side--left {
     left: clamp(-1.6rem, -5vw, -0.9rem);
-    background-image: url("/visuel 2 gauche.png");
+    background-image: url("/visuel 2 gauche.webp");
     background-position: left calc(-0.5 * var(--page-scroll-y, 0px));
   }
 
   .mobile-edge-side--right {
     right: clamp(-1.6rem, -5vw, -0.9rem);
-    background-image: url("/visuel 2 droite.png");
+    background-image: url("/visuel 2 droite.webp");
     background-position: right calc(0.5 * var(--page-scroll-y, 0px));
   }
 
@@ -164,7 +164,7 @@ body {
     content: "";
     position: absolute;
     inset: 0;
-    background-image: url("/visuel 2 droite.png");
+    background-image: url("/visuel 2 droite.webp");
     background-size: auto var(--mobile-vh, 100svh);
     background-repeat: repeat-y;
     background-position: right calc(0.5 * var(--page-scroll-y, 0px));

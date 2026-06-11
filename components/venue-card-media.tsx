@@ -14,7 +14,7 @@ export function VenueCardMedia({
   return (
     <>
       <div
-        className="absolute inset-0 bg-[url('/fond-0.png')] bg-cover bg-center"
+        className="absolute inset-0 bg-[url('/fond-0.webp')] bg-cover bg-center"
         aria-hidden
       />
       {imageSrc ? (

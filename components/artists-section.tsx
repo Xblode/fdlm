@@ -18,7 +18,7 @@ export function ArtistsSection({ venue }: ArtistsSectionProps) {
       <div className="agenda-sticky-toolbar sticky top-[var(--mobile-header-height)] z-[15] -mx-4 bg-[#f5f2eb] px-4 py-2">
         <div className="flex items-center gap-3">
           <Image
-            src="/1x/Fichier 2.png"
+            src="/1x/Fichier 2.webp"
             alt=""
             width={44}
             height={49}

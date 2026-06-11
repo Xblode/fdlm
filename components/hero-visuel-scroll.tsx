@@ -5,7 +5,7 @@ export function HeroVisuelScroll() {
     <div className="hero-visuel-drift absolute -inset-[9%]">
       <div className="hero-visuel-float relative h-full w-full">
         <Image
-          src="/visuel 1.png"
+          src="/visuel 1.webp"
           alt=""
           priority
           fill

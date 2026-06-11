@@ -48,7 +48,7 @@ export function DesktopMobilePrompt() {
 
       <header className="relative z-10 flex h-[var(--mobile-header-height)] shrink-0 items-center justify-center border-b-2 border-brand-black bg-brand-yellow px-8">
         <Image
-          src="/logo.png"
+          src="/logo.webp"
           alt="Fête de la musique"
           width={3354}
           height={784}

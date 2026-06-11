@@ -118,7 +118,7 @@ export function MobileFooter({
           <div
             role="img"
             aria-label="Fête de la musique"
-            className="aspect-[3354/784] h-10 max-w-[45%] shrink-0 bg-brand-yellow [mask-image:url('/logo.png')] [mask-size:contain] [mask-repeat:no-repeat] [mask-position:left]"
+            className="aspect-[3354/784] h-10 max-w-[45%] shrink-0 bg-brand-yellow [mask-image:url('/logo.webp')] [mask-size:contain] [mask-repeat:no-repeat] [mask-position:left]"
           />
 
           <p className="font-display text-3xl leading-none uppercase text-right">

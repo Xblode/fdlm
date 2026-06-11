@@ -90,7 +90,7 @@ export function MobileHeader() {
         }`}
       >
         <Image
-          src="/1x/Fichier 1.png"
+          src="/1x/Fichier 1.webp"
           alt=""
           width={MENU_WIDTH}
           height={MENU_HEIGHT}
@@ -105,7 +105,7 @@ export function MobileHeader() {
         }`}
       >
         <Image
-          src="/logo.png"
+          src="/logo.webp"
           alt="Fête de la musique"
           width={LOGO_WIDTH}
           height={LOGO_HEIGHT}
@@ -124,7 +124,7 @@ export function MobileHeader() {
         }`}
       >
         <Image
-          src="/1x/Fichier 3.png"
+          src="/1x/Fichier 3.webp"
           alt=""
           width={EXPLORE_WIDTH}
           height={EXPLORE_HEIGHT}

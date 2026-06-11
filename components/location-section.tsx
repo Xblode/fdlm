@@ -322,7 +322,7 @@ export function LocationSection({
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <Image
-                src="/1x/Fichier 4.png"
+                src="/1x/Fichier 4.webp"
                 alt=""
                 width={49}
                 height={49}
@@ -375,7 +375,7 @@ export function LocationSection({
             className="mt-2 mb-5 flex scroll-mt-[calc(var(--mobile-header-height)+7rem)] items-center gap-3"
           >
             <Image
-              src="/1x/Fichier 4.png"
+              src="/1x/Fichier 4.webp"
               alt=""
               width={49}
               height={49}

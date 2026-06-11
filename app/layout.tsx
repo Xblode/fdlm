@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     title: "FDLM 2026",
   },
   icons: {
-    apple: "/logo.png",
+    apple: "/logo.webp",
   },
 };
 

@@ -30,7 +30,7 @@ export function ArtistCard({ artist, venueName }: ArtistCardProps) {
 
   return (
     <article className="overflow-hidden rounded-2xl border-2 border-brand-black bg-white shadow-[4px_4px_0_0_#0a0a0a]">
-      <div className="relative aspect-[4/3] overflow-hidden bg-[url('/fond-0.png')] bg-cover bg-center">
+      <div className="relative aspect-[4/3] overflow-hidden bg-[url('/fond-0.webp')] bg-cover bg-center">
         <div className="absolute top-4 left-4 flex w-fit flex-col gap-2 rounded-2xl bg-white px-2 py-2 text-brand-black shadow-md">
           <p className="font-display text-center text-2xl leading-none tabular-nums">
             {eventInfo.dateNumeric}

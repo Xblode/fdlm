@@ -22,7 +22,7 @@ function ChevronIcon({ className = "size-5" }: { className?: string }) {
 }
 
 function VenueImageSeparator({ imageSrc }: { imageSrc?: string }) {
-  const src = imageSrc ?? "/fond-0.png";
+  const src = imageSrc ?? "/fond-0.webp";
 
   return (
     <div
@@ -86,7 +86,7 @@ export function VenueCard({ venue, onSelect }: VenueCardProps) {
           </div>
         </div>
 
-        <div className="relative flex w-fit shrink-0 flex-col gap-2 overflow-hidden rounded-2xl border-0 border-brand-black bg-[url('/fond-0.png')] bg-cover bg-center p-0 text-brand-yellow opacity-0 shadow-none transition-all duration-300 max-h-0 group-hover:max-h-[120px] group-hover:border-2 group-hover:p-2 group-hover:opacity-100 group-hover:shadow-[2px_2px_0_0_#0a0a0a]">
+        <div className="relative flex w-fit shrink-0 flex-col gap-2 overflow-hidden rounded-2xl border-0 border-brand-black bg-[url('/fond-0.webp')] bg-cover bg-center p-0 text-brand-yellow opacity-0 shadow-none transition-all duration-300 max-h-0 group-hover:max-h-[120px] group-hover:border-2 group-hover:p-2 group-hover:opacity-100 group-hover:shadow-[2px_2px_0_0_#0a0a0a]">
           <p className="font-display text-center text-2xl leading-none tabular-nums uppercase">
             {venue.hoursStart}
           </p>
