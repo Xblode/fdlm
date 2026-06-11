@@ -1,5 +1,10 @@
+"use client";
+
+import { useRef } from "react";
 import type { Venue } from "@/config/event";
 import { GradientMapImage } from "@/components/gradient-map-image";
+
+const SCROLL_THRESHOLD_PX = 8;
 
 function ChevronIcon({ className = "size-5" }: { className?: string }) {
   return (
@@ -39,9 +44,28 @@ type VenueCardProps = {
 };
 
 export function VenueCard({ venue, onSelect }: VenueCardProps) {
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+
   return (
     <button
       type="button"
+      onTouchStart={(e) => {
+        const t = e.touches[0];
+        if (t) touchStartRef.current = { x: t.clientX, y: t.clientY };
+      }}
+      onTouchEnd={(e) => {
+        const start = touchStartRef.current;
+        if (!start) return;
+        const t = e.changedTouches[0];
+        if (t) {
+          const dx = Math.abs(t.clientX - start.x);
+          const dy = Math.abs(t.clientY - start.y);
+          if (dx > SCROLL_THRESHOLD_PX || dy > SCROLL_THRESHOLD_PX) {
+            e.preventDefault();
+          }
+        }
+        touchStartRef.current = null;
+      }}
       onClick={onSelect}
       className="group flex h-[280px] w-full flex-col overflow-hidden rounded-3xl border-2 border-brand-black bg-white text-left shadow-[4px_4px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
     >
