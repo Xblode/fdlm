@@ -102,10 +102,10 @@ export function PageScrollController() {
     const snapTo = (target: number) => {
       if (isSnapping) return;
       isSnapping = true;
-      window.scrollTo({ top: target, behavior: "auto" });
+      window.scrollTo({ top: target, behavior: "smooth" });
       window.setTimeout(() => {
         isSnapping = false;
-      }, 300);
+      }, 700);
     };
 
     const onTouchStart = (e: TouchEvent) => {
@@ -128,7 +128,7 @@ export function PageScrollController() {
     };
 
     const onTouchEnd = () => {
-      if (isIOS || isSnapping) return;
+      if (isSnapping) return;
 
       const scrollY = window.scrollY;
       if (scrollY <= 2 || scrollY >= spacerHeight - 2) return;
