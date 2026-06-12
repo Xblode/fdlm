@@ -5,21 +5,7 @@ import {
   useContext,
   type ReactNode,
 } from "react";
-import type { Artist, Venue } from "@/config/event";
-
-export type EventInfo = {
-  venue: string;
-  venueType: string;
-  city: string;
-  date: string;
-  dateShort: string;
-  dateNumeric: string;
-  hours: string;
-  tagline: string;
-  address: string;
-  mapsUrl: string;
-  venueMusicStyles: readonly string[];
-};
+import type { Artist, EventInfo, Venue } from "@/lib/data/types";
 
 type SiteDataContextValue = {
   venues: Venue[];
@@ -55,3 +41,5 @@ export function useSiteData() {
 
   return context;
 }
+
+export type { EventInfo };

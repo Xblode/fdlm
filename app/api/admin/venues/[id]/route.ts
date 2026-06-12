@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ensureAdmin } from "@/lib/auth/ensure-admin";
 import { deleteVenue, getVenueById, updateVenue } from "@/lib/data/venues";
-import type { Venue } from "@/config/event";
+import type { Venue } from "@/lib/data/types";
 
 type RouteContext = {
   params: Promise<{ id: string }>;

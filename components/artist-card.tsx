@@ -1,6 +1,6 @@
 "use client";
 
-import type { Artist } from "@/config/event";
+import type { Artist } from "@/lib/data/types";
 import { useSiteData } from "@/components/site-data-provider";
 import { useProgram } from "@/components/program-provider";
 

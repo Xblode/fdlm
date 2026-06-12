@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ensureAdmin } from "@/lib/auth/ensure-admin";
 import { createArtist, getArtists } from "@/lib/data/artists";
-import type { Artist } from "@/config/event";
+import type { Artist } from "@/lib/data/types";
 
 export async function GET(request: Request) {
   const authError = await ensureAdmin();

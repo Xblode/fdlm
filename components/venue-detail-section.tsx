@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Venue } from "@/config/event";
+import type { Venue } from "@/lib/data/types";
 import { ChevronIcon } from "@/components/chevron-icon";
 import { VenueCardMedia } from "@/components/venue-card-media";
 

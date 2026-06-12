@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { cities } from "@/config/cities";
-import type { Venue } from "@/config/event";
+import type { Venue } from "@/lib/data/types";
 import { ImageUpload } from "@/components/admin/image-upload";
 
 type VenuesManagerProps = {

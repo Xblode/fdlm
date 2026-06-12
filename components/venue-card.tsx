@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef } from "react";
-import type { Venue } from "@/config/event";
+import type { Venue } from "@/lib/data/types";
 import { ChevronIcon } from "@/components/chevron-icon";
 import { GradientMapImage } from "@/components/gradient-map-image";
 

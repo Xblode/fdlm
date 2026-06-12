@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { ensureAdmin } from "@/lib/auth/ensure-admin";
 import { createVenue, getVenues, venueExists } from "@/lib/data/venues";
 import { ensureUniqueVenueId } from "@/lib/utils/slugify";
-import type { Venue } from "@/config/event";
+import type { Venue } from "@/lib/data/types";
 
 export async function GET() {
   const authError = await ensureAdmin();

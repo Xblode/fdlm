@@ -1,4 +1,4 @@
-import type { Venue, Artist } from "@/config/event";
+import type { Venue, Artist } from "@/lib/data/types";
 
 const priorityMusicStyles = ["Techno", "Rock", "House"];
 
@@ -41,8 +41,4 @@ export function buildEventInfo(featuredVenue: Venue) {
     mapsUrl: featuredVenue.mapsUrl,
     venueMusicStyles: featuredVenue.musicStyles,
   } as const;
-}
-
-export async function getFeaturedVenue(venues: Venue[]) {
-  return venues[0] ?? null;
 }

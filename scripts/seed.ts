@@ -2,7 +2,7 @@ import { config } from "dotenv";
 
 config({ path: ".env.local" });
 import { cities } from "../config/cities";
-import { artists as seedArtists, venues as seedVenues } from "../config/event";
+import { seedArtists, seedVenues } from "./seed-data";
 import { createServerSupabaseClient } from "../lib/supabase/server";
 
 async function seed() {

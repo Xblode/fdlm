@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Artist, Venue } from "@/config/event";
+import type { Artist, Venue } from "@/lib/data/types";
 
 type ArtistsManagerProps = {
   initialArtists: Artist[];

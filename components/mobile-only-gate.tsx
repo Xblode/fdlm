@@ -14,7 +14,7 @@ import {
   SiteDataProvider,
   type EventInfo,
 } from "@/components/site-data-provider";
-import type { Artist, Venue } from "@/config/event";
+import type { Artist, Venue } from "@/lib/data/types";
 
 type MobileOnlyGateProps = {
   children: React.ReactNode;

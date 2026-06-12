@@ -1,4 +1,4 @@
-import type { Artist } from "@/config/event";
+import type { Artist } from "@/lib/data/types";
 import type { DbArtist } from "@/lib/data/db-types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 

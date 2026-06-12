@@ -1,4 +1,4 @@
-import type { Venue } from "@/config/event";
+import type { Venue } from "@/lib/data/types";
 import type { DbVenue } from "@/lib/data/db-types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 

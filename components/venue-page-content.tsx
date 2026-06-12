@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { Artist, Venue } from "@/config/event";
+import type { Artist, Venue } from "@/lib/data/types";
 import { VenueDetailSection } from "@/components/venue-detail-section";
 import { ArtistsSection } from "@/components/artists-section";
 import { TransportSection } from "@/components/transport-section";

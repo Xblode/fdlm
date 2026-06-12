@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { Artist, Venue } from "@/config/event";
+import type { Artist, Venue } from "@/lib/data/types";
 import { ArtistCard } from "@/components/artist-card";
 
 type ArtistsSectionProps = {
