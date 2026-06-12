@@ -20,7 +20,7 @@ export function MobileHeroContent() {
         {/* 3. Visuel central */}
         <div className={`${heroLayerClassName} z-[3]`} aria-hidden="true">
           <div className="absolute inset-0 overflow-hidden">
-            <div className="hero-visuel-drift absolute -inset-[9%]">
+            <div className="hero-visuel-drift absolute -inset-[12%]">
               <div className="hero-visuel-float relative h-full w-full">
                 <Image
                   src="/visuel 1.webp"

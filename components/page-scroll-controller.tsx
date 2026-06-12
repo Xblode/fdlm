@@ -75,7 +75,7 @@ export function PageScrollController() {
 
         if (driftEl) {
           const progress = Math.min(Math.max(scrollY / spacerHeight, 0), 1);
-          driftEl.style.transform = `scale(0.9) translate3d(${progress * HERO_VISUEL_MAX_X}%, ${progress * HERO_VISUEL_MAX_Y}%, 0)`;
+          driftEl.style.transform = `scale(0.83) translate3d(${progress * HERO_VISUEL_MAX_X}%, ${progress * HERO_VISUEL_MAX_Y}%, 0)`;
         }
       }
     };
