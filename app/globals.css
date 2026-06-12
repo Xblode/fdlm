@@ -37,7 +37,7 @@
   height: calc(var(--mobile-vh, 100svh) - var(--mobile-header-height));
 }
 
-#hero-root.hero-inactive {
+#hero-root.hero-inactive > * {
   visibility: hidden;
   pointer-events: none !important;
 }
@@ -152,9 +152,20 @@ a {
     will-change: auto;
   }
 
-  /* Immeubles : transform appliqué en JS directement (compositor-only) */
+  /* Immeubles : bandeaux au bord (building.png 1021×14412) */
   .mobile-edge-side {
+    top: 0;
+    height: var(--mobile-vh, 100svh);
+    width: calc(var(--mobile-vh, 100svh) * 3508 / 4961 * 0.27);
     overflow: visible;
+  }
+
+  .mobile-edge-side--left {
+    left: 0;
+  }
+
+  .mobile-edge-side--right {
+    right: 0;
   }
 
   .mobile-edge-side__building {
@@ -162,33 +173,17 @@ a {
     inset: 0;
     background-image: url("/building.png");
     background-repeat: no-repeat;
-    background-size: 27% auto;
+    background-size: calc(var(--mobile-vh, 100svh) * 3508 / 4961 * 0.27) auto;
+  }
+
+  .mobile-edge-side__building--right {
+    background-position: right center;
   }
 
   .mobile-edge-side__building--left {
     background-position: left top;
     transform: scaleX(-1);
-    transform-origin: left top;
-  }
-
-  /* Bordures iOS : proportions originales, une tuile, pas de repeat-y */
-  .ios .mobile-edge-side {
-    top: 0;
-    height: var(--mobile-vh, 100svh);
-    width: calc(var(--mobile-vh, 100svh) * 3508 / 4961);
-    background-repeat: no-repeat;
-  }
-
-  .ios .mobile-edge-side--left {
-    left: clamp(-1.6rem, -5vw, -0.9rem);
-  }
-
-  .ios .mobile-edge-side--right {
-    right: clamp(-1.6rem, -5vw, -0.9rem);
-    background-image: url("/building.png");
-    background-position: right top;
-    background-repeat: no-repeat;
-    background-size: 27% auto;
+    transform-origin: 50% 0;
   }
 
   /* mix-blend-mode très coûteux sur iOS */
@@ -255,28 +250,5 @@ body {
 
   .mobile-app {
     /* Le fond est géré par body::before maintenant */
-  }
-
-  .mobile-edge-side {
-    top: calc(var(--mobile-header-height) - var(--mobile-vh, 100svh));
-    height: calc(
-      var(--mobile-vh, 100svh) - var(--mobile-header-height) +
-        (var(--mobile-vh, 100svh) * 2)
-    );
-    width: calc(var(--mobile-vh, 100svh) * 3508 / 4961);
-    background-size: auto var(--mobile-vh, 100svh);
-    background-repeat: repeat-y;
-  }
-
-  .mobile-edge-side--left {
-    left: clamp(-1.6rem, -5vw, -0.9rem);
-  }
-
-  .mobile-edge-side--right {
-    right: clamp(-1.6rem, -5vw, -0.9rem);
-    background-image: url("/building.png");
-    background-position: right top;
-    background-repeat: no-repeat;
-    background-size: 27% auto;
   }
 }

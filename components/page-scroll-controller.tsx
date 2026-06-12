@@ -51,13 +51,21 @@ export function PageScrollController() {
       lastScrollY = scrollY;
 
       if (isMobile) {
-        // transform direct sur les 2 immeubles = compositor-only, pas de recalc CSS
-        const offset = Math.round(scrollY * EDGE_PARALLAX);
-        if (edgeLeft) {
-          edgeLeft.style.transform = `translate3d(0,${-offset}px,0)`;
+        const clampedScroll = Math.min(Math.max(scrollY, 0), spacerHeight);
+        const offset = Math.round(clampedScroll * EDGE_PARALLAX);
+        const leftBuilding = edgeLeft?.querySelector<HTMLElement>(
+          ".mobile-edge-side__building",
+        );
+        const rightBuilding = edgeRight?.querySelector<HTMLElement>(
+          ".mobile-edge-side__building",
+        );
+
+        // Parallaxe via background-position : le conteneur reste au bord, pas de coupure en haut
+        if (leftBuilding) {
+          leftBuilding.style.backgroundPosition = `left ${-offset}px`;
         }
-        if (edgeRight) {
-          edgeRight.style.transform = `translate3d(0,${offset}px,0)`;
+        if (rightBuilding) {
+          rightBuilding.style.backgroundPosition = `right calc(50% + ${offset}px)`;
         }
         return;
       }
@@ -166,8 +174,12 @@ export function PageScrollController() {
       root.style.removeProperty("--page-scroll-y");
       heroRoot.classList.remove("hero-inactive");
       driftEl?.style.removeProperty("transform");
-      edgeLeft?.style.removeProperty("transform");
-      edgeRight?.style.removeProperty("transform");
+      edgeLeft
+        ?.querySelector<HTMLElement>(".mobile-edge-side__building")
+        ?.style.removeProperty("background-position");
+      edgeRight
+        ?.querySelector<HTMLElement>(".mobile-edge-side__building")
+        ?.style.removeProperty("background-position");
     };
   }, []);
 

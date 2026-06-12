@@ -3,16 +3,18 @@ export function MobileEdgeVisuals() {
     <>
       <div
         id="edge-left"
-        className="mobile-edge-side mobile-edge-side--left pointer-events-none fixed left-0 z-[6] md:hidden"
+        className="mobile-edge-side mobile-edge-side--left pointer-events-none fixed left-0 top-0 z-[2] md:hidden"
         aria-hidden="true"
       >
         <div className="mobile-edge-side__building mobile-edge-side__building--left" />
       </div>
       <div
         id="edge-right"
-        className="mobile-edge-side mobile-edge-side--right pointer-events-none fixed right-0 z-[6] md:hidden"
+        className="mobile-edge-side mobile-edge-side--right pointer-events-none fixed right-0 top-0 z-[4] md:hidden"
         aria-hidden="true"
-      />
+      >
+        <div className="mobile-edge-side__building mobile-edge-side__building--right" />
+      </div>
     </>
   );
 }
