@@ -11,7 +11,9 @@
     "start": "next start",
     "lint": "eslint",
     "db:setup": "tsx scripts/setup-db.ts",
-    "db:seed": "tsx scripts/seed.ts"
+    "db:seed": "tsx scripts/seed.ts",
+    "db:seed:demo": "tsx scripts/seed-demo.ts",
+    "db:clear-content": "tsx scripts/clear-content.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.1",
