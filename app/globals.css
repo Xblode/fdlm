@@ -176,9 +176,9 @@ a {
   .ios .mobile-edge-side--right {
     right: clamp(-1.6rem, -5vw, -0.9rem);
     background-image: url("/building.png");
-    background-position: left top;
+    background-position: right top;
     background-repeat: no-repeat;
-    background-size: 100% auto;
+    background-size: 62% auto;
   }
 
   /* mix-blend-mode très coûteux sur iOS */
@@ -269,6 +269,6 @@ body {
     background-image: url("/building.png");
     background-position: right top;
     background-repeat: no-repeat;
-    background-size: 100% auto;
+    background-size: 62% auto;
   }
 }
