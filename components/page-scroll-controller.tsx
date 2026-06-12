@@ -80,25 +80,16 @@ export function PageScrollController() {
       }
     };
 
-    const onScroll = () => {
-      root.classList.add("is-scrolling");
-      window.clearTimeout(scrollIdleTimer);
-      scrollIdleTimer = window.setTimeout(() => {
-        root.classList.remove("is-scrolling");
-      }, 150);
-
-      if (scrollRaf) return;
-      scrollRaf = requestAnimationFrame(() => {
-        scrollRaf = 0;
-        applyScroll(window.scrollY);
-      });
-    };
-
     let isSnapping = false;
     let velY = 0;
     let prevClientY = 0;
     let prevTime = 0;
     let touchStartScrollY = 0;
+    let prevScrollY = window.scrollY;
+
+    // Marge au-dessus de spacerHeight : si le geste démarre dans cette zone,
+    // on considère que l'utilisateur est "à la frontière" et peut aller au hero
+    const BOUNDARY_TOLERANCE = 100;
 
     const snapTo = (target: number) => {
       if (isSnapping) return;
@@ -107,6 +98,37 @@ export function PageScrollController() {
       window.setTimeout(() => {
         isSnapping = false;
       }, 700);
+    };
+
+    const onScroll = () => {
+      root.classList.add("is-scrolling");
+      window.clearTimeout(scrollIdleTimer);
+      scrollIdleTimer = window.setTimeout(() => {
+        root.classList.remove("is-scrolling");
+      }, 150);
+
+      const currentScrollY = window.scrollY;
+
+      // Détection du franchissement contenu → zone hero (remontée depuis le contenu)
+      // Capture aussi le momentum iOS, contrairement à un simple touchend
+      if (
+        isMobile &&
+        !isSnapping &&
+        document.getElementById("hero-spacer") &&
+        currentScrollY < spacerHeight &&
+        prevScrollY >= spacerHeight &&
+        touchStartScrollY > spacerHeight + BOUNDARY_TOLERANCE
+      ) {
+        snapTo(spacerHeight);
+      }
+
+      prevScrollY = currentScrollY;
+
+      if (scrollRaf) return;
+      scrollRaf = requestAnimationFrame(() => {
+        scrollRaf = 0;
+        applyScroll(window.scrollY);
+      });
     };
 
     const onTouchStart = (e: TouchEvent) => {
@@ -137,15 +159,8 @@ export function PageScrollController() {
 
       const scrollY = window.scrollY;
 
-      // Geste démarré depuis le contenu (sous spacerHeight) : étape intermédiaire
-      if (touchStartScrollY > spacerHeight) {
-        if (scrollY < spacerHeight) {
-          snapTo(spacerHeight);
-        }
-        return;
-      }
-
-      // Zone de transition hero ↔ contenu
+      // Zone de transition hero ↔ contenu (entre 0 et spacerHeight)
+      // Le franchissement contenu → spacerHeight est géré dans onScroll
       if (scrollY <= 2 || scrollY >= spacerHeight - 2) return;
 
       const predicted = Math.min(
