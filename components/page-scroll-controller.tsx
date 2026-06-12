@@ -98,6 +98,7 @@ export function PageScrollController() {
     let velY = 0;
     let prevClientY = 0;
     let prevTime = 0;
+    let touchStartScrollY = 0;
 
     const snapTo = (target: number) => {
       if (isSnapping) return;
@@ -110,6 +111,7 @@ export function PageScrollController() {
 
     const onTouchStart = (e: TouchEvent) => {
       isSnapping = false;
+      touchStartScrollY = window.scrollY;
       const t = e.touches[0];
       if (t) {
         prevClientY = t.clientY;
@@ -131,6 +133,16 @@ export function PageScrollController() {
       if (isSnapping) return;
 
       const scrollY = window.scrollY;
+
+      // Geste démarré depuis le contenu (sous spacerHeight) : étape intermédiaire
+      if (touchStartScrollY > spacerHeight) {
+        if (scrollY < spacerHeight) {
+          snapTo(spacerHeight);
+        }
+        return;
+      }
+
+      // Zone de transition hero ↔ contenu
       if (scrollY <= 2 || scrollY >= spacerHeight - 2) return;
 
       const predicted = Math.min(
