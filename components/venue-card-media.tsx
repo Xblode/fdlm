@@ -12,7 +12,7 @@ export function VenueCardMedia({
   const roundedClassName = rounded === "all" ? "rounded-2xl" : "rounded-t-2xl";
 
   return imageSrc ? (
-    <div className={`absolute inset-2 overflow-hidden ${roundedClassName}`}>
+    <div className={`absolute inset-0 overflow-hidden ${roundedClassName}`}>
       <GradientMapImage
         src={imageSrc}
         className="size-full object-cover"

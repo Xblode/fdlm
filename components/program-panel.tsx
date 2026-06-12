@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { artists, eventInfo, venues } from "@/config/event";
 import type { ProgramEntry } from "@/components/program-provider";
 import { useProgram } from "@/components/program-provider";
+import { ChevronIcon } from "@/components/chevron-icon";
 import { useBodyScrollLock } from "@/components/use-body-scroll-lock";
 import { useModalTransition } from "@/components/use-modal-transition";
 
@@ -26,40 +27,6 @@ function CloseIcon() {
       aria-hidden="true"
     >
       <path d="M6 6l12 12M18 6 6 18" />
-    </svg>
-  );
-}
-
-function ChevronLeftIcon({ className = "size-4" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M15 6l-6 6 6 6" />
-    </svg>
-  );
-}
-
-function ChevronRightIcon({ className = "size-4" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M9 6l6 6-6 6" />
     </svg>
   );
 }
@@ -188,7 +155,7 @@ function ProgramHourFilter({
         aria-label="Tranche précédente"
         className="inline-flex size-11 shrink-0 items-center justify-center transition-transform active:scale-95 disabled:opacity-35"
       >
-        <ChevronLeftIcon className="size-6" />
+        <ChevronIcon direction="left" className="size-6" />
       </button>
 
       <span className="min-w-0 flex-1 text-center font-display text-2xl leading-none uppercase tabular-nums">
@@ -202,7 +169,7 @@ function ProgramHourFilter({
         aria-label="Tranche suivante"
         className="inline-flex size-11 shrink-0 items-center justify-center transition-transform active:scale-95 disabled:opacity-35"
       >
-        <ChevronRightIcon className="size-6" />
+        <ChevronIcon direction="right" className="size-6" />
       </button>
     </div>
   );

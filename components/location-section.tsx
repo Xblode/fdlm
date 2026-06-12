@@ -11,46 +11,13 @@ import {
   venues,
 } from "@/config/event";
 import { FeaturedCarousel } from "@/components/featured-carousel";
+import { ChevronIcon } from "@/components/chevron-icon";
 import { MusicStyleFilters } from "@/components/music-style-filters";
 import { SearchBar } from "@/components/search-bar";
 import { VenueCard } from "@/components/venue-card";
 import { VenueCardMedia } from "@/components/venue-card-media";
 
 const VENUES_PER_PAGE = 4;
-
-function ChevronLeftIcon({ className = "size-4" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M15 6l-6 6 6 6" />
-    </svg>
-  );
-}
-
-function ChevronRightIcon({ className = "size-4" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M9 6l6 6-6 6" />
-    </svg>
-  );
-}
 
 type VenuePaginationProps = {
   currentPage: number;
@@ -77,7 +44,7 @@ function VenuePagination({
         aria-label="Page précédente"
         className="inline-flex items-center gap-1.5 rounded-full border-2 border-brand-black bg-white px-4 py-2 font-display text-sm uppercase shadow-[3px_3px_0_0_#0a0a0a] transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
       >
-        <ChevronLeftIcon />
+        <ChevronIcon direction="left" />
         Préc.
       </button>
 
@@ -93,7 +60,7 @@ function VenuePagination({
         className="inline-flex items-center gap-1.5 rounded-full border-2 border-brand-black bg-white px-4 py-2 font-display text-sm uppercase shadow-[3px_3px_0_0_#0a0a0a] transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
       >
         Suiv.
-        <ChevronRightIcon />
+        <ChevronIcon direction="right" />
       </button>
     </nav>
   );
@@ -105,21 +72,6 @@ function matchesSearch(query: string, values: string[]) {
 
   return values.some((value) =>
     value.toLowerCase().includes(normalizedQuery),
-  );
-}
-
-function ArrowIcon({ className = "size-4" }: { className?: string }) {
-  return (
-    <svg
-      className={`transition-transform group-hover:translate-x-1 ${className}`}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14M13 6l6 6-6 6" />
-    </svg>
   );
 }
 
@@ -189,7 +141,7 @@ function VenueDetail({ venue }: { venue: Venue }) {
         className="group mt-5 flex h-14 w-full items-center justify-between rounded-2xl border-2 border-brand-black bg-white px-5 font-display text-lg tracking-wide text-brand-black uppercase shadow-[4px_4px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
       >
         <span>Y aller sur Maps</span>
-        <ArrowIcon />
+        <ChevronIcon className="size-4 transition-transform group-hover:translate-x-1" />
       </a>
     </>
   );
@@ -340,7 +292,7 @@ export function LocationSection({
               className="group inline-flex shrink-0 items-center gap-2 bg-transparent font-display text-lg tracking-wide text-brand-black uppercase"
             >
               Fermer
-              <ArrowIcon className="size-4 rotate-90" />
+              <ChevronIcon direction="down" className="size-4" />
             </button>
           </div>
         ) : (

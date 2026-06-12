@@ -5,22 +5,8 @@ import { BottomSheetPortal } from "@/components/bottom-sheet-portal";
 import type { City } from "@/config/cities";
 import { cities as defaultCities, getCityById } from "@/config/cities";
 import { useBodyScrollLock } from "@/components/use-body-scroll-lock";
+import { ChevronIcon } from "@/components/chevron-icon";
 import { useModalTransition } from "@/components/use-modal-transition";
-
-function ChevronDownIcon({ className = "size-4" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-    >
-      <path d="M6 9l6 6 6-6" />
-    </svg>
-  );
-}
 
 function CloseIcon() {
   return (
@@ -92,7 +78,7 @@ export function CityPicker({
           {selectedCity.name}
         </span>
 
-        <ChevronDownIcon className="size-6 shrink-0" />
+        <ChevronIcon direction="down" className="size-6 shrink-0" />
       </button>
 
       {isMounted ? (

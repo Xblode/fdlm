@@ -2,24 +2,10 @@
 
 import { useRef } from "react";
 import type { Venue } from "@/config/event";
+import { ChevronIcon } from "@/components/chevron-icon";
 import { GradientMapImage } from "@/components/gradient-map-image";
 
 const SCROLL_THRESHOLD_PX = 8;
-
-function ChevronIcon({ className = "size-5" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14M13 6l6 6-6 6" />
-    </svg>
-  );
-}
 
 function VenueImageSeparator({ imageSrc }: { imageSrc?: string }) {
   const src = imageSrc ?? "/fond-0.webp";
@@ -29,11 +15,7 @@ function VenueImageSeparator({ imageSrc }: { imageSrc?: string }) {
       className="relative w-full flex-1 overflow-hidden border-y-2 border-brand-black transition-all duration-300 ease-out"
       aria-hidden="true"
     >
-      <GradientMapImage
-        src={src}
-        alt=""
-        className="absolute inset-x-0 top-1/2 h-full min-h-[140px] w-full -translate-y-1/2 object-cover"
-      />
+      <GradientMapImage src={src} alt="" />
     </div>
   );
 }

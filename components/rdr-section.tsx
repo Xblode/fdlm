@@ -6,8 +6,9 @@ import {
   preventionPosters,
   rdrContent,
 } from "@/config/prevention";
+import { ChevronIcon } from "@/components/chevron-icon";
 
-const POSTER_TILTS = [-4, 3, -2, 5, -3];
+const POSTER_TILTS = [-4, 3, -2, 5, -3, 4, -5, 2];
 
 function ShieldIcon({ className = "size-5" }: { className?: string }) {
   return (
@@ -116,15 +117,11 @@ export function RdrSection() {
 
       <div className="relative">
         <div className="flex items-center gap-3">
-          <Image
-            src="/1x/Fichier 6.png"
-            alt=""
-            width={69}
-            height={69}
-            className="h-5 w-auto shrink-0 object-contain"
+          <div
             aria-hidden
+            className="size-[22px] shrink-0 bg-brand-yellow [mask-image:url('/1x/Fichier%206.png')] [mask-size:contain] [mask-repeat:no-repeat] [mask-position:center]"
           />
-          <h2 className="font-display text-4xl leading-[0.95] uppercase">
+          <h2 className="translate-y-[2px] font-display text-4xl leading-[0.95] uppercase">
             {rdrContent.title}
           </h2>
         </div>
@@ -154,7 +151,7 @@ export function RdrSection() {
               aria-label="Affiche précédente"
               className="inline-flex size-11 items-center justify-center rounded-full border-2 border-brand-yellow/40 text-brand-yellow transition-transform active:scale-95"
             >
-              ←
+              <ChevronIcon direction="left" className="size-4 text-brand-yellow" />
             </button>
             <button
               type="button"
@@ -162,7 +159,7 @@ export function RdrSection() {
               aria-label="Affiche suivante"
               className="inline-flex size-11 items-center justify-center rounded-full border-2 border-brand-yellow bg-brand-yellow text-brand-black transition-transform active:scale-95"
             >
-              →
+              <ChevronIcon direction="right" className="size-4 text-brand-black" />
             </button>
           </div>
         </div>
@@ -194,21 +191,16 @@ export function RdrSection() {
                   <TapeCorner className="-top-2 -left-2 rotate-[-8deg]" />
                   <TapeCorner className="-top-2 -right-2 rotate-[98deg]" />
 
-                  <div className="relative aspect-[2/3] overflow-hidden rounded-xl border-2 border-brand-yellow bg-brand-black shadow-[6px_6px_0_0_#ffdf24]">
+                  <div className="relative aspect-[2/3] overflow-hidden rounded-xl border-2 border-brand-yellow bg-white">
                     <Image
                       src={poster.image}
                       alt={poster.title}
                       fill
-                      quality={60}
+                      quality={75}
                       sizes="(max-width: 767px) 72vw, 264px"
-                      className="object-cover"
+                      className="object-contain"
                       priority={index === 0}
                     />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-black via-brand-black/70 to-transparent px-4 pt-16 pb-4">
-                      <span className="font-display text-3xl leading-none text-brand-yellow/20 uppercase">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                    </div>
                   </div>
                 </button>
               </article>

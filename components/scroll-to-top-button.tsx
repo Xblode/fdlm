@@ -1,23 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-function ArrowUpIcon() {
-  return (
-    <svg
-      className="size-6"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 19V5M12 5l-6 6M12 5l6 6" />
-    </svg>
-  );
-}
+import { ChevronIcon } from "@/components/chevron-icon";
 
 const BOTTOM_THRESHOLD_PX = 160;
 
@@ -74,7 +58,7 @@ export function ScrollToTopButton() {
           : "pointer-events-none translate-y-3 opacity-0"
       }`}
     >
-      <ArrowUpIcon />
+      <ChevronIcon direction="up" className="size-6 text-brand-yellow" />
     </button>
   );
 }

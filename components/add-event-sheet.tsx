@@ -68,7 +68,65 @@ function emptyArtistEntry(): VenueArtistEntry {
 }
 
 const timeInputClassName =
-  "w-full rounded-2xl border-2 border-brand-black bg-white px-3 py-3 font-display text-base uppercase text-brand-black shadow-[3px_3px_0_0_#0a0a0a] outline-none focus:ring-2 focus:ring-brand-black/20 [color-scheme:light]";
+  "w-full rounded-2xl border-2 border-brand-black bg-white px-3 py-3 font-display text-base uppercase text-brand-black shadow-[3px_3px_0_0_#0a0a0a] outline-none";
+
+function ClockIcon({ className = "size-4" }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
+
+type StyledTimeInputProps = {
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+};
+
+function StyledTimeInput({
+  id,
+  value,
+  onChange,
+  required,
+}: StyledTimeInputProps) {
+  const display = value ? value.slice(0, 5) : "--:--";
+
+  return (
+    <div className="relative w-full rounded-2xl focus-within:ring-2 focus-within:ring-brand-black/20">
+      <div
+        className={`${timeInputClassName} pointer-events-none flex items-center justify-between gap-2`}
+        aria-hidden="true"
+      >
+        <span
+          className={`tabular-nums ${value ? "" : "text-brand-black/45"}`}
+        >
+          {display}
+        </span>
+        <ClockIcon className="size-4 shrink-0 text-brand-black/70" />
+      </div>
+      <input
+        id={id}
+        type="time"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        required={required}
+        step={900}
+        className="time-input-overlay absolute inset-0 z-10 h-full w-full cursor-pointer"
+      />
+    </div>
+  );
+}
 
 type TimeRangeFieldProps = {
   id: string;
@@ -99,28 +157,22 @@ function TimeRangeField({
           <label htmlFor={`${id}-start`} className="text-xs uppercase text-brand-black/55">
             Début
           </label>
-          <input
+          <StyledTimeInput
             id={`${id}-start`}
-            type="time"
             value={start}
-            onChange={(event) => onStartChange(event.target.value)}
+            onChange={onStartChange}
             required={required}
-            step={900}
-            className={timeInputClassName}
           />
         </div>
         <div className="flex flex-col gap-1">
           <label htmlFor={`${id}-end`} className="text-xs uppercase text-brand-black/55">
             Fin
           </label>
-          <input
+          <StyledTimeInput
             id={`${id}-end`}
-            type="time"
             value={end}
-            onChange={(event) => onEndChange(event.target.value)}
+            onChange={onEndChange}
             required={required}
-            step={900}
-            className={timeInputClassName}
           />
         </div>
       </div>
