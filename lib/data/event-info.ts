@@ -1,13 +1,21 @@
 import type { Venue, Artist } from "@/lib/data/types";
+import { collectArtistGenres } from "@/lib/data/venue-styles";
+import { normalizeMusicStyle } from "@/lib/utils/music-style";
 
-const priorityMusicStyles = ["Techno", "Rock", "House"];
+const priorityMusicStyles = ["TECHNO", "ROCK", "HOUSE"];
 
 export function buildMusicFilterStyles(venues: Venue[], artists: Artist[]) {
-  return [
-    ...new Set([
-      ...venues.flatMap((venue) => venue.musicStyles),
-      ...artists.map((artist) => artist.genre),
-    ]),
+  const styles = [
+    ...new Set(
+      [
+        ...venues.flatMap((venue) =>
+          venue.musicStyles.map((style) => normalizeMusicStyle(style)),
+        ),
+        ...collectArtistGenres(
+          artists.map((artist) => artist.genre).filter(Boolean),
+        ),
+      ].filter(Boolean),
+    ),
   ].sort((a, b) => {
     const aIndex = priorityMusicStyles.indexOf(a);
     const bIndex = priorityMusicStyles.indexOf(b);
@@ -17,6 +25,8 @@ export function buildMusicFilterStyles(venues: Venue[], artists: Artist[]) {
     if (bIndex !== -1) return 1;
     return a.localeCompare(b, "fr");
   });
+
+  return styles;
 }
 
 export const eventMeta = {

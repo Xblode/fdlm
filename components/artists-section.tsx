@@ -28,13 +28,19 @@ export function ArtistsSection({ venue, artists }: ArtistsSectionProps) {
       </div>
 
       <div className="flex flex-col gap-6 pt-2">
-        {artists.map((artist) => (
-          <ArtistCard
-            key={artist.id}
-            artist={artist}
-            venueName={venue.name}
-          />
-        ))}
+        {artists.length > 0 ? (
+          artists.map((artist) => (
+            <ArtistCard
+              key={artist.id}
+              artist={artist}
+              venueName={venue.name}
+            />
+          ))
+        ) : (
+          <p className="rounded-2xl border-2 border-dashed border-brand-black bg-white px-4 py-8 text-center font-display text-xl uppercase">
+            Aucun résultat
+          </p>
+        )}
       </div>
     </section>
   );

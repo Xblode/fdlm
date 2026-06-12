@@ -37,6 +37,8 @@ export async function PATCH(request: Request, context: RouteContext) {
     );
   }
 
+  delete body.musicStyles;
+
   try {
     const venue = await updateVenue(id, body);
     return NextResponse.json({ ok: true, data: venue });

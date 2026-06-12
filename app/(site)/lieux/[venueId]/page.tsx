@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getArtistsForVenue } from "@/lib/data/artists";
+import { getArtists, getArtistsForVenue } from "@/lib/data/artists";
+import { filterVenuesWithArtists } from "@/lib/data/public-content";
 import { getVenueById, getVenues } from "@/lib/data/venues";
 import { VenuePageContent } from "@/components/venue-page-content";
 
@@ -11,8 +12,14 @@ type VenuePageProps = {
 };
 
 export async function generateStaticParams() {
-  const venues = await getVenues({ publishedOnly: true });
-  return venues.map((venue) => ({ venueId: venue.id }));
+  const [venues, artists] = await Promise.all([
+    getVenues({ publishedOnly: true }),
+    getArtists({ publishedOnly: true }),
+  ]);
+
+  return filterVenuesWithArtists(venues, artists).map((venue) => ({
+    venueId: venue.id,
+  }));
 }
 
 export async function generateMetadata({
@@ -38,7 +45,7 @@ export default async function VenuePage({ params }: VenuePageProps) {
     getArtistsForVenue(venueId),
   ]);
 
-  if (!venue) {
+  if (!venue || artists.length === 0) {
     notFound();
   }
 

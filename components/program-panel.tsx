@@ -7,6 +7,7 @@ import { useSiteData } from "@/components/site-data-provider";
 import { ChevronIcon } from "@/components/chevron-icon";
 import { useBodyScrollLock } from "@/components/use-body-scroll-lock";
 import { useModalTransition } from "@/components/use-modal-transition";
+import { formatArtistSlot } from "@/lib/utils/artist-slot";
 
 type ProgramPanelProps = {
   isOpen: boolean;
@@ -108,7 +109,7 @@ type ProgramSuggestionCardProps = {
 
 function ProgramSuggestionCard({ suggestion, onAdd }: ProgramSuggestionCardProps) {
   return (
-    <li className="flex items-start justify-between gap-3 rounded-2xl border-2 border-dashed border-brand-black/35 bg-white/80 px-3 py-3">
+    <li className="flex items-start justify-between gap-3 rounded-2xl border-2 border-dashed border-brand-black bg-white/80 px-3 py-3">
       <div className="min-w-0 text-left">
         <span className="font-display inline-block rounded-full border border-brand-black/20 bg-brand-black/5 px-2 py-0.5 text-[0.65rem] tracking-[0.15em] text-brand-black/70 uppercase">
           Proposition
@@ -203,7 +204,7 @@ export function ProgramPanel({ isOpen, onClose }: ProgramPanelProps) {
       .map((artist) => ({
         artistId: artist.id,
         name: artist.name,
-        slot: artist.slot,
+        slot: formatArtistSlot(artist),
         genre: artist.genre,
         venueName: getVenueName(artist.venueId, venues),
       }))
@@ -345,7 +346,7 @@ export function ProgramPanel({ isOpen, onClose }: ProgramPanelProps) {
                       : null}
 
                     {showEmptyHourSlot ? (
-                      <li className="rounded-2xl border-2 border-dashed border-brand-black/30 bg-white/70 px-4 py-6 text-center">
+                      <li className="rounded-2xl border-2 border-dashed border-brand-black bg-white/70 px-4 py-6 text-center">
                         <p className="font-display text-base uppercase">
                           Rien sur cette tranche
                         </p>
@@ -357,7 +358,7 @@ export function ProgramPanel({ isOpen, onClose }: ProgramPanelProps) {
                   </ul>
                 </div>
               ) : (
-                <div className="rounded-2xl border-2 border-dashed border-brand-black/30 bg-white px-4 py-8 text-center">
+                <div className="rounded-2xl border-2 border-dashed border-brand-black bg-white px-4 py-8 text-center">
                   <p className="font-display text-xl leading-tight uppercase">
                     Ton programme est vide
                   </p>

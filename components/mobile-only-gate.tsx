@@ -20,6 +20,7 @@ type MobileOnlyGateProps = {
   children: React.ReactNode;
   venues: Venue[];
   artists: Artist[];
+  availableCityIds: string[];
   musicFilterStyles: string[];
   eventInfo: EventInfo;
 };
@@ -61,10 +62,17 @@ export function MobileOnlyGate({
   children,
   venues,
   artists,
+  availableCityIds,
   musicFilterStyles,
   eventInfo,
 }: MobileOnlyGateProps) {
-  const siteData = { venues, artists, musicFilterStyles, eventInfo };
+  const siteData = {
+    venues,
+    artists,
+    availableCityIds,
+    musicFilterStyles,
+    eventInfo,
+  };
 
   if (!siteConfig.mobileOnly) {
     return <MobileAppShell siteData={siteData}>{children}</MobileAppShell>;

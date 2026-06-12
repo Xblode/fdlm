@@ -17,18 +17,27 @@ function SearchIcon() {
 type SearchBarProps = {
   value: string;
   onChange: (value: string) => void;
+  placeholder?: string;
+  className?: string;
 };
 
-export function SearchBar({ value, onChange }: SearchBarProps) {
+export function SearchBar({
+  value,
+  onChange,
+  placeholder = "Rechercher un lieu, un artiste...",
+  className = "mb-3",
+}: SearchBarProps) {
   return (
-    <label className="mb-3 flex h-12 items-center gap-3 rounded-2xl border-2 border-brand-black bg-white px-4 shadow-[3px_3px_0_0_#0a0a0a]">
+    <label
+      className={`flex h-12 items-center gap-3 rounded-2xl border-2 border-brand-black bg-white px-4 shadow-[3px_3px_0_0_#0a0a0a] ${className}`}
+    >
       <SearchIcon />
       <span className="sr-only">Rechercher</span>
       <input
         type="search"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        placeholder="Rechercher un lieu, un artiste..."
+        placeholder={placeholder}
         className="w-full bg-transparent text-base text-brand-black outline-none placeholder:text-brand-black/40"
       />
     </label>

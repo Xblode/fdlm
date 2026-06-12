@@ -48,14 +48,16 @@ export function ImageUpload({ value, onChange }: ImageUploadProps) {
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="font-display text-sm uppercase">Image</label>
+    <div className="flex flex-col gap-2 text-brand-black">
+      <label className="font-display text-sm uppercase text-brand-black">
+        Image
+      </label>
       <div className="flex flex-wrap items-center gap-3">
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
           disabled={isUploading}
-          className="rounded-full border-2 border-brand-black bg-white px-4 py-2 font-display text-sm uppercase shadow-[2px_2px_0_0_#0a0a0a] disabled:opacity-50"
+          className="rounded-full border-2 border-brand-black bg-white px-4 py-2 font-display text-sm uppercase text-brand-black shadow-[2px_2px_0_0_#0a0a0a] disabled:opacity-50"
         >
           {isUploading ? "Envoi..." : "Choisir une image"}
         </button>

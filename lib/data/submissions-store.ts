@@ -80,3 +80,13 @@ export async function updateSubmissionStatus(
 
   return mapSubmission(data as DbSubmission);
 }
+
+export async function deleteSubmission(id: string) {
+  const supabase = createServerSupabaseClient();
+  const { error } = await supabase
+    .from("event_submissions")
+    .delete()
+    .eq("id", id);
+
+  if (error) throw error;
+}

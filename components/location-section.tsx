@@ -2,13 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSiteData } from "@/components/site-data-provider";
 import { FeaturedCarousel } from "@/components/featured-carousel";
 import { ChevronIcon } from "@/components/chevron-icon";
 import { MusicStyleFilters } from "@/components/music-style-filters";
 import { SearchBar } from "@/components/search-bar";
 import { VenueCard } from "@/components/venue-card";
+import { musicStylesMatch } from "@/lib/utils/music-style";
+import { shuffleArray } from "@/lib/utils/shuffle";
 
 const VENUES_PER_PAGE = 4;
 
@@ -76,6 +78,8 @@ export function LocationSection({
   const { venues, artists, musicFilterStyles, eventInfo } = useSiteData();
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [artistShuffleSeed, setArtistShuffleSeed] = useState(() => Date.now());
+  const previousStyleRef = useRef<string | null>(null);
   const filterKey = `${selectedCityId}|${selectedStyle ?? ""}|${searchQuery}`;
   const [pageState, setPageState] = useState({ filterKey, page: 1 });
 
@@ -84,14 +88,16 @@ export function LocationSection({
   }
 
   const filteredVenues = useMemo(() => {
+    const venueIdsWithArtists = new Set(artists.map((artist) => artist.venueId));
+
     return venues.filter((venue) => {
+      if (!venueIdsWithArtists.has(venue.id)) return false;
+
       const matchesCity = venue.cityId === selectedCityId;
 
       const matchesStyle =
         !selectedStyle ||
-        venue.musicStyles.some(
-          (style) => style.toLowerCase() === selectedStyle.toLowerCase(),
-        );
+        venue.musicStyles.some((style) => musicStylesMatch(style, selectedStyle));
 
       const matchesQuery = matchesSearch(searchQuery, [
         venue.name,
@@ -102,7 +108,7 @@ export function LocationSection({
 
       return matchesCity && matchesStyle && matchesQuery;
     });
-  }, [selectedCityId, selectedStyle, searchQuery, venues]);
+  }, [selectedCityId, selectedStyle, searchQuery, venues, artists]);
 
   const totalPages = Math.max(
     1,
@@ -131,19 +137,45 @@ export function LocationSection({
       if (!cityVenueIds.has(artist.venueId)) return false;
 
       const matchesStyle =
-        !selectedStyle ||
-        artist.genre.toLowerCase() === selectedStyle.toLowerCase();
+        !selectedStyle || musicStylesMatch(artist.genre, selectedStyle);
 
       const matchesQuery = matchesSearch(searchQuery, [
         artist.name,
         artist.genre,
         artist.slot,
+        artist.slotEnd,
         eventInfo.venue,
       ]);
 
       return matchesStyle && matchesQuery;
     });
   }, [selectedCityId, selectedStyle, searchQuery, venues, artists, eventInfo]);
+
+  useEffect(() => {
+    if (selectedStyle === null && previousStyleRef.current !== null) {
+      setArtistShuffleSeed(Date.now());
+    }
+
+    previousStyleRef.current = selectedStyle;
+  }, [selectedStyle]);
+
+  useEffect(() => {
+    if (selectedStyle === null) {
+      setArtistShuffleSeed(Date.now());
+    }
+  }, [selectedCityId, selectedStyle]);
+
+  const isAllStylesView = selectedStyle === null;
+
+  const carouselArtists = useMemo(() => {
+    if (!isAllStylesView) {
+      return [...filteredArtists].sort((a, b) =>
+        a.slot.localeCompare(b.slot, "fr", { numeric: true }),
+      );
+    }
+
+    return shuffleArray(filteredArtists, artistShuffleSeed);
+  }, [filteredArtists, isAllStylesView, artistShuffleSeed]);
 
   function goToPage(page: number) {
     setPageState({ filterKey, page });
@@ -176,7 +208,11 @@ export function LocationSection({
       </div>
 
       <div className="mt-2">
-        <FeaturedCarousel artists={filteredArtists} />
+        <FeaturedCarousel
+          artists={carouselArtists}
+          showShuffleButton={isAllStylesView && filteredArtists.length > 1}
+          onShuffle={() => setArtistShuffleSeed(Date.now())}
+        />
       </div>
 
       <div
@@ -208,7 +244,7 @@ export function LocationSection({
           />
         </>
       ) : (
-        <p className="rounded-2xl border-2 border-dashed border-brand-black/30 bg-white px-4 py-8 text-center font-display text-xl uppercase">
+        <p className="rounded-2xl border-2 border-dashed border-brand-black bg-white px-4 py-8 text-center font-display text-xl uppercase">
           Aucun résultat
         </p>
       )}

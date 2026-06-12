@@ -42,6 +42,7 @@ async function seedDemo() {
       venue_id: artist.venueId,
       name: artist.name,
       slot: artist.slot,
+      slot_end: artist.slotEnd ?? "",
       genre: artist.genre,
       published: true,
     });

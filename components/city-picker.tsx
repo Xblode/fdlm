@@ -28,12 +28,18 @@ type CityPickerProps = {
   cities?: City[];
   value: string;
   onChange: (cityId: string) => void;
+  variant?: "footer" | "admin";
+  pendingCountsByCityId?: Record<string, number>;
+  onOpen?: () => void;
 };
 
 export function CityPicker({
   cities = defaultCities,
   value,
   onChange,
+  variant = "footer",
+  pendingCountsByCityId,
+  onOpen,
 }: CityPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const titleId = useId();
@@ -64,29 +70,45 @@ export function CityPicker({
     setIsOpen(false);
   }
 
+  const isAdmin = variant === "admin";
+
   return (
     <>
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          onOpen?.();
+          setIsOpen(true);
+        }}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
         aria-controls={titleId}
-        className="mt-6 flex h-12 w-full items-center gap-3 rounded-full border-2 border-brand-yellow px-4 text-left shadow-[3px_3px_0_0_#ffdf24] transition-transform active:scale-[0.98]"
+        className={
+          isAdmin
+            ? "flex h-12 w-full max-w-md items-center gap-3 rounded-full border-2 border-brand-black bg-white px-4 text-left shadow-[3px_3px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
+            : "mt-6 flex h-12 w-full items-center gap-3 rounded-full border-2 border-brand-yellow px-4 text-left shadow-[3px_3px_0_0_#ffdf24] transition-transform active:scale-[0.98]"
+        }
       >
-        <span className="min-w-0 flex-1 truncate font-display text-xl leading-none uppercase text-brand-yellow">
+        <span
+          className={`min-w-0 flex-1 truncate font-display text-xl leading-none uppercase ${
+            isAdmin ? "text-brand-black" : "text-brand-yellow"
+          }`}
+        >
           {selectedCity.name}
         </span>
 
-        <ChevronIcon direction="down" className="size-5 shrink-0" />
+        <ChevronIcon
+          direction="down"
+          className={`size-5 shrink-0 ${isAdmin ? "text-brand-black" : ""}`}
+        />
       </button>
 
       {isMounted ? (
         <BottomSheetPortal>
           <div
-            className={`fixed inset-x-0 bottom-0 top-[var(--mobile-header-height)] z-40 bg-brand-black/55 transition-opacity duration-300 ease-out md:hidden ${
+            className={`fixed inset-0 z-40 bg-brand-black/55 transition-opacity duration-300 ease-out ${
               isVisible ? "opacity-100" : "pointer-events-none opacity-0"
-            }`}
+            } ${isAdmin ? "" : "inset-x-0 bottom-0 top-[var(--mobile-header-height)] md:hidden"}`}
             onClick={() => setIsOpen(false)}
             aria-hidden={false}
           />
@@ -95,11 +117,17 @@ export function CityPicker({
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-4 pb-6 md:hidden"
+            className={`pointer-events-none fixed z-50 px-4 ${
+              isAdmin
+                ? "inset-0 flex items-end justify-center pb-6 md:items-center"
+                : "inset-x-0 bottom-0 pb-6 md:hidden"
+            }`}
           >
             <div
-              className={`pointer-events-auto transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-                isVisible ? "translate-y-0" : "pointer-events-none translate-y-full"
+              className={`pointer-events-auto w-full max-w-md transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                isVisible
+                  ? "translate-y-0 md:scale-100"
+                  : "translate-y-full md:translate-y-0 md:scale-95"
               }`}
             >
               <div className="overflow-hidden rounded-3xl border-2 border-brand-black bg-brand-yellow shadow-[8px_8px_0_0_#0a0a0a]">
@@ -121,6 +149,10 @@ export function CityPicker({
               <ul className="flex flex-col gap-2">
                 {cities.map((city) => {
                   const isAvailable = city.available === true;
+                  const pendingCount =
+                    isAdmin && pendingCountsByCityId
+                      ? (pendingCountsByCityId[city.id] ?? 0)
+                      : 0;
 
                   return (
                     <li key={city.id}>
@@ -139,8 +171,18 @@ export function CityPicker({
                           {city.name}
                         </span>
                         {isAvailable ? (
-                          <span className="shrink-0 rounded-full bg-brand-black px-2 py-0.5 text-[0.65rem] tracking-[0.15em] text-brand-yellow">
-                            Actif
+                          <span className="flex shrink-0 items-center gap-1.5">
+                            {isAdmin && pendingCount > 0 ? (
+                              <span
+                                className="rounded-full border-2 border-brand-black bg-brand-yellow px-2 py-0.5 font-display text-[0.65rem] tabular-nums text-brand-black"
+                                aria-label={`${pendingCount} demande${pendingCount > 1 ? "s" : ""} en attente`}
+                              >
+                                {pendingCount}
+                              </span>
+                            ) : null}
+                            <span className="rounded-full bg-brand-black px-2 py-0.5 text-[0.65rem] tracking-[0.15em] text-brand-yellow">
+                              Actif
+                            </span>
                           </span>
                         ) : (
                           <span className="shrink-0 rounded-full bg-brand-black/10 px-2 py-0.5 text-[0.65rem] tracking-[0.15em] text-brand-black/45">

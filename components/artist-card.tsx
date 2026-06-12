@@ -3,6 +3,7 @@
 import type { Artist } from "@/lib/data/types";
 import { useSiteData } from "@/components/site-data-provider";
 import { useProgram } from "@/components/program-provider";
+import { formatArtistSlot } from "@/lib/utils/artist-slot";
 
 type ArtistCardProps = {
   artist: Artist;
@@ -14,6 +15,8 @@ export function ArtistCard({ artist, venueName }: ArtistCardProps) {
   const location = venueName ?? eventInfo.venue;
   const { addToProgram, removeFromProgramByArtist, isInProgram } = useProgram();
   const alreadyAdded = isInProgram(artist.id);
+
+  const slotLabel = formatArtistSlot(artist);
 
   async function handleToggleProgram() {
     if (alreadyAdded) {
@@ -39,7 +42,7 @@ export function ArtistCard({ artist, venueName }: ArtistCardProps) {
           </p>
           <div className="h-px w-full bg-brand-black/20" />
           <p className="font-display text-center text-2xl leading-none uppercase">
-            {artist.slot}
+            {slotLabel}
           </p>
         </div>
 
@@ -60,7 +63,7 @@ export function ArtistCard({ artist, venueName }: ArtistCardProps) {
           </h3>
           <p className="mt-1 text-sm font-medium uppercase">{location}</p>
           <p className="mt-0.5 text-xs uppercase text-brand-black/60">
-            {artist.slot}
+            {slotLabel}
           </p>
         </div>
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { EventSubmission } from "@/config/submissions";
 import { createSubmission } from "@/lib/data/submissions-store";
+import { normalizeGenreField } from "@/lib/utils/music-style";
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
@@ -38,7 +39,7 @@ function validateSubmission(body: unknown): EventSubmission | null {
       venue: data.venue.trim(),
       hoursStart,
       hoursEnd,
-      style: data.style.trim(),
+      style: normalizeGenreField(data.style),
       cityId: data.cityId.trim(),
     };
   }
@@ -70,7 +71,10 @@ function validateSubmission(body: unknown): EventSubmission | null {
           typeof artist.hoursStart === "string" ? artist.hoursStart.trim() : "",
         hoursEnd:
           typeof artist.hoursEnd === "string" ? artist.hoursEnd.trim() : "",
-        style: typeof artist.style === "string" ? artist.style.trim() : "",
+        style:
+          typeof artist.style === "string"
+            ? normalizeGenreField(artist.style)
+            : "",
       }))
       .filter(
         (artist) =>

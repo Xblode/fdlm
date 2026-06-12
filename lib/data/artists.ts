@@ -1,13 +1,16 @@
 import type { Artist } from "@/lib/data/types";
 import type { DbArtist } from "@/lib/data/db-types";
+import { normalizeDisplayText } from "@/lib/utils/display-text";
+import { normalizeGenreField } from "@/lib/utils/music-style";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export function mapArtist(row: DbArtist): Artist {
   return {
     id: row.id,
-    name: row.name,
+    name: normalizeDisplayText(row.name),
     slot: row.slot,
-    genre: row.genre,
+    slotEnd: row.slot_end ?? "",
+    genre: normalizeGenreField(row.genre),
     venueId: row.venue_id,
   };
 }
@@ -16,11 +19,12 @@ export function mapArtistToDb(
   artist: Omit<Artist, "id"> & { id?: string; published?: boolean },
 ) {
   return {
-    id: artist.id,
+    ...(artist.id ? { id: artist.id } : {}),
     venue_id: artist.venueId,
-    name: artist.name,
+    name: normalizeDisplayText(artist.name),
     slot: artist.slot,
-    genre: artist.genre,
+    slot_end: artist.slotEnd ?? "",
+    genre: normalizeGenreField(artist.genre),
     published: artist.published ?? true,
   };
 }
@@ -115,9 +119,12 @@ export async function updateArtist(artistId: string, updates: Partial<Artist>) {
   const supabase = createServerSupabaseClient();
   const payload: Partial<DbArtist> = {};
 
-  if (updates.name !== undefined) payload.name = updates.name;
+  if (updates.name !== undefined) payload.name = normalizeDisplayText(updates.name);
   if (updates.slot !== undefined) payload.slot = updates.slot;
-  if (updates.genre !== undefined) payload.genre = updates.genre;
+  if (updates.slotEnd !== undefined) payload.slot_end = updates.slotEnd;
+  if (updates.genre !== undefined) {
+    payload.genre = normalizeGenreField(updates.genre);
+  }
   if (updates.venueId !== undefined) payload.venue_id = updates.venueId;
 
   const { data, error } = await supabase

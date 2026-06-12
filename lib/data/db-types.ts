@@ -13,6 +13,7 @@ export type DbVenue = {
   hours_start: string;
   hours_end: string;
   music_styles: string[];
+  style_config: unknown;
   maps_url: string;
   card_image: string | null;
   published: boolean;
@@ -24,6 +25,7 @@ export type DbArtist = {
   venue_id: string;
   name: string;
   slot: string;
+  slot_end: string;
   genre: string;
   published: boolean;
   created_at: string;

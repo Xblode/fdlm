@@ -1,19 +1,30 @@
 import { getArtists } from "@/lib/data/artists";
 import { buildEventInfo, buildMusicFilterStyles } from "@/lib/data/event-info";
+import {
+  filterVenuesWithArtists,
+  getAvailableCityIds,
+} from "@/lib/data/public-content";
 import { getVenues } from "@/lib/data/venues";
 
 export async function getSiteData() {
-  const [venues, artists] = await Promise.all([
+  const [allVenues, artists] = await Promise.all([
     getVenues({ publishedOnly: true }),
     getArtists({ publishedOnly: true }),
   ]);
 
+  const venues = filterVenuesWithArtists(allVenues, artists);
+  const visibleVenueIds = new Set(venues.map((venue) => venue.id));
+  const publicArtists = artists.filter((artist) =>
+    visibleVenueIds.has(artist.venueId),
+  );
+  const availableCityIds = getAvailableCityIds(allVenues, artists);
   const featuredVenue = venues[0];
 
   return {
     venues,
-    artists,
-    musicFilterStyles: buildMusicFilterStyles(venues, artists),
+    artists: publicArtists,
+    availableCityIds,
+    musicFilterStyles: buildMusicFilterStyles(venues, publicArtists),
     eventInfo: featuredVenue
       ? buildEventInfo(featuredVenue)
       : {

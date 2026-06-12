@@ -15,14 +15,7 @@ export default async function AdminArtistesPage() {
 
   return (
     <section className="rounded-3xl border-2 border-brand-black bg-brand-yellow p-5 shadow-[6px_6px_0_0_#0a0a0a]">
-      <h2 className="font-display text-3xl leading-none uppercase">Artistes</h2>
-      <p className="mt-2 text-sm leading-relaxed text-brand-black/70">
-        Gère les artistes associés aux lieux.
-      </p>
-
-      <div className="mt-5">
-        <ArtistsManager initialArtists={artists} venues={venues} />
-      </div>
+      <ArtistsManager initialArtists={artists} venues={venues} />
     </section>
   );
 }

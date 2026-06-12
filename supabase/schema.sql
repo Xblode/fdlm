@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS venues (
   hours_start TEXT NOT NULL DEFAULT '',
   hours_end TEXT NOT NULL DEFAULT '',
   music_styles TEXT[] NOT NULL DEFAULT '{}',
+  style_config JSONB NOT NULL DEFAULT '[]',
   maps_url TEXT NOT NULL DEFAULT '',
   card_image TEXT,
   published BOOLEAN NOT NULL DEFAULT true,
@@ -26,6 +27,7 @@ CREATE TABLE IF NOT EXISTS artists (
   venue_id TEXT NOT NULL REFERENCES venues(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   slot TEXT NOT NULL DEFAULT '',
+  slot_end TEXT NOT NULL DEFAULT '',
   genre TEXT NOT NULL DEFAULT '',
   published BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -68,3 +70,6 @@ VALUES (
   ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 )
 ON CONFLICT (id) DO NOTHING;
+
+ALTER TABLE venues ADD COLUMN IF NOT EXISTS style_config JSONB NOT NULL DEFAULT '[]';
+ALTER TABLE artists ADD COLUMN IF NOT EXISTS slot_end TEXT NOT NULL DEFAULT '';

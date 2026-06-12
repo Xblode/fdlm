@@ -9,6 +9,8 @@ export function MusicStyleFilters({
   selectedStyle,
   onSelect,
 }: MusicStyleFiltersProps) {
+  const visibleStyles = styles.filter((style) => style.trim().length > 0);
+
   return (
     <div className="hide-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 py-2">
       <button
@@ -22,7 +24,7 @@ export function MusicStyleFilters({
       >
         Tous
       </button>
-      {styles.map((style) => {
+      {visibleStyles.map((style) => {
         const isActive = selectedStyle === style;
 
         return (

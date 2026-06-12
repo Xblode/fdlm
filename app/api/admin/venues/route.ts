@@ -57,10 +57,10 @@ export async function POST(request: Request) {
       address: body.address ?? "",
       hoursStart: body.hoursStart ?? "18H00",
       hoursEnd: body.hoursEnd ?? "02H00",
-      musicStyles: body.musicStyles ?? [],
+      musicStyles: [],
       mapsUrl: body.mapsUrl ?? "",
       cardImage: body.cardImage,
-      published: body.published ?? true,
+      published: body.published ?? false,
     });
 
     return NextResponse.json({ ok: true, data: venue });

@@ -10,6 +10,7 @@ import type { Artist, EventInfo, Venue } from "@/lib/data/types";
 type SiteDataContextValue = {
   venues: Venue[];
   artists: Artist[];
+  availableCityIds: string[];
   musicFilterStyles: string[];
   eventInfo: EventInfo;
 };
@@ -19,13 +20,20 @@ const SiteDataContext = createContext<SiteDataContextValue | null>(null);
 export function SiteDataProvider({
   venues,
   artists,
+  availableCityIds,
   musicFilterStyles,
   eventInfo,
   children,
 }: SiteDataContextValue & { children: ReactNode }) {
   return (
     <SiteDataContext.Provider
-      value={{ venues, artists, musicFilterStyles, eventInfo }}
+      value={{
+        venues,
+        artists,
+        availableCityIds,
+        musicFilterStyles,
+        eventInfo,
+      }}
     >
       {children}
     </SiteDataContext.Provider>

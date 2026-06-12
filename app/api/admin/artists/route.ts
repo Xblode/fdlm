@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { ensureAdmin } from "@/lib/auth/ensure-admin";
 import { createArtist, getArtists } from "@/lib/data/artists";
+import { syncVenueMusicStyles } from "@/lib/data/venues";
 import type { Artist } from "@/lib/data/types";
 
 export async function GET(request: Request) {
@@ -54,10 +55,13 @@ export async function POST(request: Request) {
     const artist = await createArtist({
       name: body.name,
       venueId: body.venueId,
-      slot: body.slot ?? "20h00",
+      slot: body.slot ?? "20H00",
+      slotEnd: body.slotEnd ?? "",
       genre: body.genre ?? "",
       published: body.published ?? true,
     });
+
+    await syncVenueMusicStyles(body.venueId);
 
     return NextResponse.json({ ok: true, data: artist });
   } catch (error) {

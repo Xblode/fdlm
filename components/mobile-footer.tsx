@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Partner } from "@/config/partners";
 import { partners } from "@/config/partners";
 import { siteConfig } from "@/config/site";
+import type { City } from "@/config/cities";
 import { useSiteData } from "@/components/site-data-provider";
 import { CityPicker } from "@/components/city-picker";
 
@@ -104,9 +105,11 @@ function PartnerLogo({ partner }: { partner: Partner }) {
 export function MobileFooter({
   selectedCityId,
   onCityChange,
+  cities,
 }: {
   selectedCityId: string;
   onCityChange: (cityId: string) => void;
+  cities?: City[];
 }) {
   const { author, instagram, behance } = siteConfig.credits;
   const { eventInfo } = useSiteData();
@@ -126,7 +129,11 @@ export function MobileFooter({
           </p>
         </div>
 
-        <CityPicker value={selectedCityId} onChange={onCityChange} />
+        <CityPicker
+          value={selectedCityId}
+          onChange={onCityChange}
+          cities={cities}
+        />
 
         <div className="mt-3 grid grid-cols-2 gap-3">
           <button

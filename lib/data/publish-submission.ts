@@ -1,14 +1,22 @@
 import type { EventSubmission } from "@/config/submissions";
 import { createArtists } from "@/lib/data/artists";
-import { createVenue, findVenueByName, venueExists } from "@/lib/data/venues";
+import {
+  createVenue,
+  findVenueByName,
+  syncVenueMusicStyles,
+  venueExists,
+} from "@/lib/data/venues";
 import { ensureUniqueVenueId } from "@/lib/utils/slugify";
+import { normalizeDisplayText } from "@/lib/utils/display-text";
+import { buildMapsSearchUrl } from "@/lib/utils/maps-url";
+import { normalizeGenreField } from "@/lib/utils/music-style";
 
 function formatHoursForDisplay(time: string) {
   return time.replace(":", "H");
 }
 
 function buildMapsUrl(name: string, cityName = "Le Havre") {
-  return `https://maps.google.com/?q=${encodeURIComponent(`${name} ${cityName}`)}`;
+  return buildMapsSearchUrl(`${normalizeDisplayText(name)} ${cityName}`);
 }
 
 async function resolveVenueId(cityId: string, venueName: string) {
@@ -20,9 +28,9 @@ async function resolveVenueId(cityId: string, venueName: string) {
   await createVenue({
     id,
     cityId,
-    name: venueName.trim(),
-    venueType: "Lieu",
-    address: "Adresse à compléter",
+    name: normalizeDisplayText(venueName),
+    venueType: "LIEU",
+    address: "ADRESSE À COMPLÉTER",
     hoursStart: "18H00",
     hoursEnd: "02H00",
     musicStyles: [],
@@ -35,32 +43,38 @@ async function resolveVenueId(cityId: string, venueName: string) {
 
 export async function publishApprovedSubmission(payload: EventSubmission) {
   if (payload.type === "venue") {
-    const venueId = await ensureUniqueVenueId(payload.venueName, venueExists);
+    const existingVenue = await findVenueByName(payload.cityId, payload.venueName);
+    const venueId =
+      existingVenue?.id ??
+      (await ensureUniqueVenueId(payload.venueName, venueExists));
 
-    await createVenue({
-      id: venueId,
-      cityId: payload.cityId,
-      name: payload.venueName.trim(),
-      venueType: "Lieu",
-      address: "Adresse à compléter",
-      hoursStart: formatHoursForDisplay(payload.hoursStart),
-      hoursEnd: formatHoursForDisplay(payload.hoursEnd),
-      musicStyles: [
-        ...new Set(payload.artists.map((artist) => artist.style).filter(Boolean)),
-      ],
-      mapsUrl: buildMapsUrl(payload.venueName),
-      published: true,
-    });
+    if (!existingVenue) {
+      await createVenue({
+        id: venueId,
+        cityId: payload.cityId,
+        name: normalizeDisplayText(payload.venueName),
+        venueType: "LIEU",
+        address: "ADRESSE À COMPLÉTER",
+        hoursStart: formatHoursForDisplay(payload.hoursStart),
+        hoursEnd: formatHoursForDisplay(payload.hoursEnd),
+        musicStyles: [],
+        mapsUrl: buildMapsUrl(payload.venueName),
+        published: true,
+      });
+    }
 
     await createArtists(
       payload.artists.map((artist) => ({
         venueId,
-        name: artist.name.trim(),
+        name: normalizeDisplayText(artist.name),
         slot: formatHoursForDisplay(artist.hoursStart),
-        genre: artist.style.trim(),
+        slotEnd: formatHoursForDisplay(artist.hoursEnd),
+        genre: normalizeGenreField(artist.style),
         published: true,
       })),
     );
+
+    await syncVenueMusicStyles(venueId);
 
     return { venueId };
   }
@@ -70,12 +84,15 @@ export async function publishApprovedSubmission(payload: EventSubmission) {
   const artist = await createArtists([
     {
       venueId,
-      name: payload.name.trim(),
+      name: normalizeDisplayText(payload.name),
       slot: formatHoursForDisplay(payload.hoursStart),
-      genre: payload.style.trim(),
+      slotEnd: formatHoursForDisplay(payload.hoursEnd),
+      genre: normalizeGenreField(payload.style),
       published: true,
     },
   ]);
+
+  await syncVenueMusicStyles(venueId);
 
   return { venueId, artistId: artist[0]?.id };
 }

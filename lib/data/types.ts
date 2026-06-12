@@ -1,3 +1,7 @@
+import type { VenueStyleEntry } from "@/lib/data/venue-styles";
+
+export type { VenueStyleEntry };
+
 export type Venue = {
   id: string;
   cityId: string;
@@ -7,6 +11,7 @@ export type Venue = {
   hoursStart: string;
   hoursEnd: string;
   musicStyles: string[];
+  styleConfig?: VenueStyleEntry[];
   mapsUrl: string;
   cardImage?: string;
 };
@@ -15,6 +20,7 @@ export type Artist = {
   id: string;
   name: string;
   slot: string;
+  slotEnd: string;
   genre: string;
   venueId: string;
 };

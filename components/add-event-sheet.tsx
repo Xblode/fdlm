@@ -639,7 +639,7 @@ export function AddEventSheet({ defaultCityId }: AddEventSheetProps) {
                     id={`${formId}-artist-style`}
                     label="Style"
                     value={style}
-                    onChange={setStyle}
+                    onChange={(value) => setStyle(value.toUpperCase())}
                     suggestions={[...musicFilterStyles]}
                     placeholder="Choisir ou saisir un style"
                     required
@@ -742,7 +742,9 @@ export function AddEventSheet({ defaultCityId }: AddEventSheetProps) {
                           label="Style"
                           value={artist.style}
                           onChange={(value) =>
-                            updateVenueArtist(index, { style: value })
+                            updateVenueArtist(index, {
+                              style: value.toUpperCase(),
+                            })
                           }
                           suggestions={[...musicFilterStyles]}
                           placeholder="Style musical"

@@ -62,6 +62,18 @@ export const seedVenues: Venue[] = [
 ];
 
 export const seedArtists: Omit<Artist, "id">[] = [
-  { name: "Flowtapage", slot: "22h00", genre: "Techno", venueId: "eau-tarie" },
-  { name: "Noctyra", slot: "23h30", genre: "Techno", venueId: "eau-tarie" },
+  {
+    name: "Flowtapage",
+    slot: "22H00",
+    slotEnd: "23H30",
+    genre: "TECHNO",
+    venueId: "eau-tarie",
+  },
+  {
+    name: "Noctyra",
+    slot: "23H30",
+    slotEnd: "01H00",
+    genre: "TECHNO",
+    venueId: "eau-tarie",
+  },
 ];

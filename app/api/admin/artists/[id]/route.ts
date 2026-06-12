@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { ensureAdmin } from "@/lib/auth/ensure-admin";
 import { deleteArtist, getArtistById, updateArtist } from "@/lib/data/artists";
+import { syncVenueMusicStyles } from "@/lib/data/venues";
 import type { Artist } from "@/lib/data/types";
 
 type RouteContext = {
@@ -39,6 +40,14 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   try {
     const artist = await updateArtist(id, body);
+    const venueIds = new Set(
+      [existing.venueId, body.venueId].filter(Boolean) as string[],
+    );
+
+    await Promise.all(
+      [...venueIds].map((venueId) => syncVenueMusicStyles(venueId)),
+    );
+
     return NextResponse.json({ ok: true, data: artist });
   } catch (error) {
     console.error("Update artist failed:", error);
@@ -59,9 +68,15 @@ export async function DELETE(_request: Request, context: RouteContext) {
   }
 
   const { id } = await context.params;
+  const existing = await getArtistById(id);
 
   try {
     await deleteArtist(id);
+
+    if (existing) {
+      await syncVenueMusicStyles(existing.venueId);
+    }
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Delete artist failed:", error);

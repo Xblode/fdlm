@@ -1,18 +1,42 @@
 import type { Venue } from "@/lib/data/types";
 import type { DbVenue } from "@/lib/data/db-types";
+import {
+  collectArtistGenres,
+  getActiveStyleNames,
+  mergeStyleConfig,
+  parseStyleConfig,
+} from "@/lib/data/venue-styles";
+import { normalizeMusicStyle } from "@/lib/utils/music-style";
+import { normalizeDisplayText } from "@/lib/utils/display-text";
+import { resolveVenueMapsUrl, resolveVenueMapsUrlForSave } from "@/lib/utils/maps-url";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export function mapVenue(row: DbVenue): Venue {
+  const styleConfig = parseStyleConfig(row.style_config);
+  const musicStyles = getActiveStyleNames(styleConfig);
+  const name = normalizeDisplayText(row.name);
+  const address = normalizeDisplayText(row.address);
+
   return {
     id: row.id,
     cityId: row.city_id,
-    name: row.name,
-    venueType: row.venue_type,
-    address: row.address,
+    name,
+    venueType: normalizeDisplayText(row.venue_type),
+    address,
     hoursStart: row.hours_start,
     hoursEnd: row.hours_end,
-    musicStyles: row.music_styles ?? [],
-    mapsUrl: row.maps_url,
+    musicStyles:
+      musicStyles.length > 0
+        ? musicStyles
+        : (row.music_styles ?? [])
+            .map((styleName) => normalizeMusicStyle(styleName))
+            .filter(Boolean),
+    styleConfig,
+    mapsUrl: resolveVenueMapsUrl({
+      mapsUrl: row.maps_url ?? "",
+      address,
+      name,
+    }),
     cardImage: row.card_image ?? undefined,
   };
 }
@@ -20,16 +44,23 @@ export function mapVenue(row: DbVenue): Venue {
 export function mapVenueToDb(
   venue: Omit<Venue, "id"> & { id?: string; published?: boolean },
 ) {
+  const name = normalizeDisplayText(venue.name);
+  const address = normalizeDisplayText(venue.address);
+
   return {
     id: venue.id,
     city_id: venue.cityId,
-    name: venue.name,
-    venue_type: venue.venueType,
-    address: venue.address,
+    name,
+    venue_type: normalizeDisplayText(venue.venueType),
+    address,
     hours_start: venue.hoursStart,
     hours_end: venue.hoursEnd,
     music_styles: venue.musicStyles,
-    maps_url: venue.mapsUrl,
+    maps_url: resolveVenueMapsUrlForSave({
+      mapsUrl: venue.mapsUrl,
+      address,
+      name,
+    }),
     card_image: venue.cardImage ?? null,
     published: venue.published ?? true,
   };
@@ -51,7 +82,24 @@ export async function getVenues(options?: { cityId?: string; publishedOnly?: boo
 
   if (error) throw error;
 
-  return (data as DbVenue[]).map(mapVenue);
+  let venues = (data as DbVenue[]).map(mapVenue);
+
+  if (options?.publishedOnly !== false) {
+    const { data: artists, error: artistsError } = await supabase
+      .from("artists")
+      .select("venue_id")
+      .eq("published", true);
+
+    if (artistsError) throw artistsError;
+
+    const venueIdsWithArtists = new Set(
+      (artists ?? []).map((artist) => artist.venue_id),
+    );
+
+    venues = venues.filter((venue) => venueIdsWithArtists.has(venue.id));
+  }
+
+  return venues;
 }
 
 export async function getVenueById(venueId: string, publishedOnly = true) {
@@ -98,17 +146,39 @@ export async function createVenue(
 }
 
 export async function updateVenue(venueId: string, updates: Partial<Venue>) {
+  const existing = await getVenueById(venueId, false);
+  if (!existing) throw new Error("Lieu introuvable.");
+
+  const merged = { ...existing, ...updates };
+  const name = normalizeDisplayText(merged.name);
+  const address = normalizeDisplayText(merged.address);
+
   const supabase = createServerSupabaseClient();
   const payload: Partial<DbVenue> = {};
 
   if (updates.cityId !== undefined) payload.city_id = updates.cityId;
-  if (updates.name !== undefined) payload.name = updates.name;
-  if (updates.venueType !== undefined) payload.venue_type = updates.venueType;
-  if (updates.address !== undefined) payload.address = updates.address;
+  if (
+    updates.name !== undefined ||
+    updates.venueType !== undefined ||
+    updates.address !== undefined ||
+    updates.mapsUrl !== undefined
+  ) {
+    payload.name = name;
+    payload.venue_type = normalizeDisplayText(merged.venueType);
+    payload.address = address;
+    payload.maps_url = resolveVenueMapsUrlForSave({
+      mapsUrl: merged.mapsUrl,
+      address,
+      name,
+    });
+  }
   if (updates.hoursStart !== undefined) payload.hours_start = updates.hoursStart;
   if (updates.hoursEnd !== undefined) payload.hours_end = updates.hoursEnd;
   if (updates.musicStyles !== undefined) payload.music_styles = updates.musicStyles;
-  if (updates.mapsUrl !== undefined) payload.maps_url = updates.mapsUrl;
+  if (updates.styleConfig !== undefined) {
+    payload.style_config = updates.styleConfig;
+    payload.music_styles = getActiveStyleNames(updates.styleConfig);
+  }
   if (updates.cardImage !== undefined) payload.card_image = updates.cardImage ?? null;
 
   const { data, error } = await supabase
@@ -128,6 +198,56 @@ export async function deleteVenue(venueId: string) {
   const { error } = await supabase.from("venues").delete().eq("id", venueId);
 
   if (error) throw error;
+}
+
+export async function syncVenueMusicStyles(venueId: string) {
+  const supabase = createServerSupabaseClient();
+
+  const { data: venueRow, error: venueError } = await supabase
+    .from("venues")
+    .select("music_styles, style_config")
+    .eq("id", venueId)
+    .maybeSingle();
+
+  if (venueError) throw venueError;
+  if (!venueRow) return [];
+
+  const { data: artists, error: artistsError } = await supabase
+    .from("artists")
+    .select("genre")
+    .eq("venue_id", venueId);
+
+  if (artistsError) throw artistsError;
+
+  const artistGenres = collectArtistGenres(
+    (artists ?? []).map((artist) => artist.genre ?? ""),
+  );
+
+  const existingConfig = parseStyleConfig(venueRow.style_config);
+  const styleConfig = mergeStyleConfig(
+    existingConfig.length > 0
+      ? existingConfig
+      : (venueRow.music_styles ?? []).map((name: string) => ({
+          name,
+          active: true,
+        })),
+    artistGenres,
+  );
+  const musicStyles = getActiveStyleNames(styleConfig);
+  const hasArtists = (artists ?? []).length > 0;
+
+  const { error } = await supabase
+    .from("venues")
+    .update({
+      music_styles: musicStyles,
+      style_config: styleConfig,
+      published: hasArtists,
+    })
+    .eq("id", venueId);
+
+  if (error) throw error;
+
+  return musicStyles;
 }
 
 export async function findVenueByName(cityId: string, name: string) {

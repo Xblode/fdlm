@@ -4,9 +4,12 @@ import Image from "next/image";
 import type { Artist } from "@/lib/data/types";
 import { useSiteData } from "@/components/site-data-provider";
 import { useProgram } from "@/components/program-provider";
+import { formatArtistSlot } from "@/lib/utils/artist-slot";
 
 type FeaturedCarouselProps = {
   artists: Artist[];
+  showShuffleButton?: boolean;
+  onShuffle?: () => void;
 };
 
 function FeaturedArtistCard({
@@ -46,7 +49,7 @@ function FeaturedArtistCard({
             {artist.name}
           </p>
           <p className="mt-1.5 text-xs text-brand-yellow/90 uppercase">
-            {artist.slot} · {venueName}
+            {formatArtistSlot(artist)} · {venueName}
           </p>
 
           <button
@@ -71,10 +74,12 @@ function FeaturedArtistCard({
   );
 }
 
-export function FeaturedCarousel({ artists }: FeaturedCarouselProps) {
+export function FeaturedCarousel({
+  artists,
+  showShuffleButton = false,
+  onShuffle,
+}: FeaturedCarouselProps) {
   const { venues } = useSiteData();
-
-  if (artists.length === 0) return null;
 
   return (
     <div className="mb-10">
@@ -92,20 +97,38 @@ export function FeaturedCarousel({ artists }: FeaturedCarouselProps) {
         </h2>
       </div>
 
-      <div className="hide-scrollbar -mx-4 overflow-x-auto py-3">
-        <div className="flex w-max snap-x snap-mandatory gap-4 px-4">
-          {artists.map((artist) => (
-            <FeaturedArtistCard
-              key={artist.id}
-              artist={artist}
-              venueName={
-                venues.find((venue) => venue.id === artist.venueId)?.name ??
-                artist.venueId
-              }
-            />
-          ))}
+      {artists.length > 0 ? (
+        <div className="hide-scrollbar -mx-4 overflow-x-auto py-3">
+          <div className="flex w-max snap-x snap-mandatory gap-4 px-4">
+            {artists.map((artist) => (
+              <FeaturedArtistCard
+                key={artist.id}
+                artist={artist}
+                venueName={
+                  venues.find((venue) => venue.id === artist.venueId)?.name ??
+                  artist.venueId
+                }
+              />
+            ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <p className="rounded-2xl border-2 border-dashed border-brand-black bg-white px-4 py-8 text-center font-display text-xl uppercase">
+          Aucun résultat
+        </p>
+      )}
+
+      {showShuffleButton && onShuffle ? (
+        <div className="mt-3 flex justify-center">
+          <button
+            type="button"
+            onClick={onShuffle}
+            className="rounded-full border-2 border-brand-black bg-white px-4 py-2 font-display text-sm uppercase text-brand-black shadow-[3px_3px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
+          >
+            Découvrir d&apos;autres ?
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
