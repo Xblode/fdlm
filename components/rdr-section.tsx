@@ -190,9 +190,13 @@ export function RdrSection() {
           })}
         </div>
 
+        <p className="mt-3 text-center text-[0.6rem] tracking-wide text-brand-yellow/30 uppercase">
+          © Thomas Argentin &amp; Benjamin Planchon
+        </p>
+
         <a
           href={rdrContent.orderHref}
-          className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 border-brand-yellow bg-brand-yellow px-5 text-center font-display text-lg tracking-wide text-brand-black uppercase transition-transform active:scale-[0.98]"
+          className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 border-brand-yellow bg-brand-yellow px-5 text-center font-display text-lg tracking-wide text-brand-black uppercase transition-transform active:scale-[0.98]"
         >
           {rdrContent.orderLabel}
         </a>
