@@ -193,7 +193,7 @@ a {
   }
 
   /* Fond fixe simplifié : couleur unie, pas d'image lourde en couche fixed */
-  .ios body::before {
+  .ios html::before {
     background-image: none;
     background-color: #0088bb;
   }
@@ -220,26 +220,21 @@ body {
 @media (max-width: 767px) {
   html {
     overflow-y: auto;
+    overscroll-behavior-y: none;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    isolation: isolate;
   }
 
   html::-webkit-scrollbar {
     display: none;
   }
 
-  body {
-    overflow-y: visible;
-    height: auto;
-  }
-
-  /* Sur mobile, background-attachment: fixed lag énormément sur iOS Safari. 
-     L'astuce ultra-performante est un pseudo-élément en position: fixed */
-  body::before {
+  html::before {
     content: "";
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
     background-color: #0088bb;
     background-image: url("/fond-0.webp");
     background-size: cover;
@@ -248,7 +243,16 @@ body {
     pointer-events: none;
   }
 
+  body {
+    position: relative;
+    z-index: 1;
+    overflow-y: visible;
+    overscroll-behavior-y: none;
+    height: auto;
+    background: transparent;
+  }
+
   .mobile-app {
-    /* Le fond est géré par body::before maintenant */
+    /* Le fond est géré par html::before */
   }
 }

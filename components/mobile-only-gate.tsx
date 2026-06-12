@@ -2,6 +2,7 @@ import { siteConfig } from "@/config/site";
 import { DesktopMobilePrompt } from "@/components/desktop-mobile-prompt";
 import { MobileEdgeVisuals } from "@/components/mobile-edge-visuals";
 import { MobileViewportFix } from "@/components/mobile-viewport-fix";
+import { MobileOverscrollLock } from "@/components/mobile-overscroll-lock";
 import { PageScrollController } from "@/components/page-scroll-controller";
 import { MobileHeader } from "@/components/mobile-header";
 import { MobileHeroContent } from "@/components/mobile-hero-content";
@@ -27,6 +28,7 @@ function MobileAppShell({
         className={`mobile-app relative flex min-h-full flex-1 flex-col ${className}`}
       >
         <MobileViewportFix />
+        <MobileOverscrollLock />
         <StyleRecovery />
         <PageScrollController />
         <IosButtonTapFix />
