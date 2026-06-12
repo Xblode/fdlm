@@ -154,7 +154,21 @@ a {
 
   /* Immeubles : transform appliqué en JS directement (compositor-only) */
   .mobile-edge-side {
-    contain: paint;
+    overflow: visible;
+  }
+
+  .mobile-edge-side__building {
+    position: absolute;
+    inset: 0;
+    background-image: url("/building.png");
+    background-repeat: no-repeat;
+    background-size: 27% auto;
+    background-position: right top;
+  }
+
+  .mobile-edge-side__building--left {
+    transform: scaleX(-1);
+    transform-origin: right top;
   }
 
   /* Bordures iOS : proportions originales, une tuile, pas de repeat-y */
@@ -162,18 +176,11 @@ a {
     top: 0;
     height: var(--mobile-vh, 100svh);
     width: calc(var(--mobile-vh, 100svh) * 3508 / 4961);
-    background-size: auto var(--mobile-vh, 100svh);
     background-repeat: no-repeat;
-    contain: paint;
   }
 
   .ios .mobile-edge-side--left {
     left: clamp(-1.6rem, -5vw, -0.9rem);
-    background-image: url("/building.png");
-    background-position: right top;
-    background-repeat: no-repeat;
-    background-size: 27% auto;
-    transform-origin: right top;
   }
 
   .ios .mobile-edge-side--right {
@@ -263,11 +270,6 @@ body {
 
   .mobile-edge-side--left {
     left: clamp(-1.6rem, -5vw, -0.9rem);
-    background-image: url("/building.png");
-    background-position: right top;
-    background-repeat: no-repeat;
-    background-size: 27% auto;
-    transform-origin: right top;
   }
 
   .mobile-edge-side--right {
