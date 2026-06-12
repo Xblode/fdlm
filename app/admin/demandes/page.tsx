@@ -14,9 +14,6 @@ export default async function AdminDemandesPage() {
       <h2 className="font-display text-3xl leading-none uppercase">
         Demandes
       </h2>
-      <p className="mt-2 text-sm leading-relaxed text-brand-black/70">
-        Valide ou refuse les ajouts soumis depuis le site.
-      </p>
 
       <div className="mt-5">
         <SubmissionsTable initialSubmissions={initialSubmissions} />
