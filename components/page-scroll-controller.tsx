@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { isIOSDevice } from "@/lib/device";
 
 const HERO_VISUEL_MAX_X = 6;
 const HERO_VISUEL_MAX_Y = -2.5;
@@ -16,14 +17,14 @@ export function PageScrollController() {
     if (!heroRoot || !spacer) return;
 
     const driftEl = heroRoot.querySelector<HTMLElement>(".hero-visuel-drift");
+    const isIOS = isIOSDevice();
 
-    // CSS scroll-driven animations handle parallax natively on modern browsers
-    const useNativeScrollAnim = CSS.supports("animation-timeline: scroll()");
+    // Safari iOS : les scroll-driven animations provoquent des crashs mémoire
+    const useNativeScrollAnim =
+      !isIOS && CSS.supports("animation-timeline: scroll()");
 
-    // Cache spacer height — avoids layout thrashing on every scroll event
     let spacerHeight = spacer.offsetHeight || 1;
 
-    // ── Visibility toggle via IntersectionObserver ──────────────────────
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
         heroRoot.classList.toggle("hero-inactive", !entry.isIntersecting);
@@ -32,16 +33,12 @@ export function PageScrollController() {
     );
     visibilityObserver.observe(spacer);
 
-    // ── Parallax + edge parallax CSS var (fallback only) ─────────────────
     const onScroll = () => {
       const scrollY = window.scrollY;
 
       if (!useNativeScrollAnim) {
-        // Edge parallax fallback (CSS scroll-driven handles it on modern browsers)
         root.style.setProperty("--page-scroll-y", `${scrollY}px`);
 
-        // Hero visuel parallax: update transform directly — compositor-only,
-        // avoids style recalculation that CSS vars would trigger
         if (driftEl) {
           const progress = Math.min(Math.max(scrollY / spacerHeight, 0), 1);
           driftEl.style.transform = `scale(0.9) translate3d(${progress * HERO_VISUEL_MAX_X}%, ${progress * HERO_VISUEL_MAX_Y}%, 0)`;
@@ -49,7 +46,6 @@ export function PageScrollController() {
       }
     };
 
-    // ── Snap at touchend ──────────────────────────────────────────────────
     let isSnapping = false;
     let velY = 0;
     let prevClientY = 0;
@@ -58,10 +54,10 @@ export function PageScrollController() {
     const snapTo = (target: number) => {
       if (isSnapping) return;
       isSnapping = true;
-      window.scrollTo({ top: target, behavior: "smooth" });
+      window.scrollTo({ top: target, behavior: "auto" });
       window.setTimeout(() => {
         isSnapping = false;
-      }, 700);
+      }, 300);
     };
 
     const onTouchStart = (e: TouchEvent) => {
@@ -84,9 +80,12 @@ export function PageScrollController() {
     };
 
     const onTouchEnd = () => {
-      if (isSnapping) return;
+      // Snap désactivé sur iOS — provoque des conflits de scroll avec Safari
+      if (isIOS || isSnapping) return;
+
       const scrollY = window.scrollY;
       if (scrollY <= 2 || scrollY >= spacerHeight - 2) return;
+
       const predicted = Math.min(
         1,
         Math.max(0, (scrollY + velY * 250) / spacerHeight),
@@ -95,10 +94,10 @@ export function PageScrollController() {
       if (velY > SNAP_VEL_MIN) goDown = true;
       else if (velY < -SNAP_VEL_MIN) goDown = false;
       else goDown = predicted >= SNAP_THRESHOLD;
+
       snapTo(goDown ? spacerHeight : 0);
     };
 
-    // Update cached height on resize / orientation change
     const onResize = () => {
       spacerHeight = spacer.offsetHeight || 1;
       onScroll();

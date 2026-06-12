@@ -135,6 +135,37 @@ a {
   mix-blend-mode: multiply;
 }
 
+/* iOS Safari : mode safe — évite les crashs mémoire du navigateur */
+@media (max-width: 767px) {
+  .ios .hero-visuel-float,
+  .ios .hero-btn-arrow {
+    animation: none !important;
+    will-change: auto;
+  }
+
+  .ios .hero-visuel-drift {
+    animation: none !important;
+    will-change: auto;
+  }
+
+  /* Bordures latérales = images énormes + parallaxe → crash fréquent sur Safari */
+  .ios .mobile-edge-side {
+    display: none !important;
+  }
+
+  /* mix-blend-mode très coûteux sur iOS */
+  .ios .venue-card-gradient-overlay {
+    mix-blend-mode: normal;
+    opacity: 0.55;
+  }
+
+  /* Fond fixe simplifié : couleur unie, pas d'image lourde en couche fixed */
+  .ios body::before {
+    background-image: none;
+    background-color: #0088bb;
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

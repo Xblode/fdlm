@@ -55,6 +55,13 @@ export default function RootLayout({
       lang="fr"
       className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} ${anton.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var i=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);if(i)document.documentElement.classList.add("ios")})();`,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <SharedGradientFilter />
         {children}

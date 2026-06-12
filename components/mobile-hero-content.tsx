@@ -19,7 +19,7 @@ export function MobileHeroContent() {
                 alt=""
                 priority
                 fill
-                quality={60}
+                quality={50}
                 sizes="100vw"
                 className="object-cover object-top"
               />
@@ -32,9 +32,8 @@ export function MobileHeroContent() {
           <Image
             src="/contenu 2.webp"
             alt=""
-            priority
             fill
-            quality={60}
+            quality={55}
             sizes="100vw"
             className="h-full w-full object-fill"
           />
