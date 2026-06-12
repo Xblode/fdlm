@@ -169,8 +169,11 @@ a {
 
   .ios .mobile-edge-side--left {
     left: clamp(-1.6rem, -5vw, -0.9rem);
-    background-image: url("/visuel 2 gauche.webp");
+    background-image: url("/building.png");
     background-position: right top;
+    background-repeat: no-repeat;
+    background-size: 27% auto;
+    transform-origin: right top;
   }
 
   .ios .mobile-edge-side--right {
@@ -260,8 +263,11 @@ body {
 
   .mobile-edge-side--left {
     left: clamp(-1.6rem, -5vw, -0.9rem);
-    background-image: url("/visuel 2 gauche.webp");
-    background-position: left top;
+    background-image: url("/building.png");
+    background-position: right top;
+    background-repeat: no-repeat;
+    background-size: 27% auto;
+    transform-origin: right top;
   }
 
   .mobile-edge-side--right {

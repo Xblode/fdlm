@@ -54,7 +54,7 @@ export function PageScrollController() {
         // transform direct sur les 2 immeubles = compositor-only, pas de recalc CSS
         const offset = Math.round(scrollY * EDGE_PARALLAX);
         if (edgeLeft) {
-          edgeLeft.style.transform = `translate3d(0,${-offset}px,0)`;
+          edgeLeft.style.transform = `scaleX(-1) translate3d(0,${-offset}px,0)`;
         }
         if (edgeRight) {
           edgeRight.style.transform = `translate3d(0,${offset}px,0)`;
