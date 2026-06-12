@@ -23,9 +23,11 @@ export function MobileViewportFix() {
     };
 
     window.addEventListener("orientationchange", onOrientationChange);
+    window.addEventListener("resize", applyMobileVh);
 
     return () => {
       window.removeEventListener("orientationchange", onOrientationChange);
+      window.removeEventListener("resize", applyMobileVh);
       document.documentElement.style.removeProperty("--mobile-vh");
       document.documentElement.classList.remove("ios");
     };
