@@ -91,10 +91,14 @@ a {
   }
 }
 
-/* Float : une seule couche GPU suffit (pas de will-change explicite ici,
-   le parent composited absorbe l'animation) */
+/* Float : animation auto sur l'image centrale du hero */
 .hero-visuel-float {
   animation: hero-visuel-float 6.5s ease-in-out infinite;
+}
+
+/* Pause le float pendant le scroll pour libérer le GPU */
+.is-scrolling .hero-visuel-float {
+  animation-play-state: paused;
 }
 
 @keyframes hero-visuel-float {
@@ -148,17 +152,9 @@ a {
     will-change: auto;
   }
 
-  /* Immeubles : parallaxe JS légère via --page-scroll-y */
+  /* Immeubles : transform appliqué en JS directement (compositor-only) */
   .mobile-edge-side {
-    will-change: transform;
-  }
-
-  .mobile-edge-side--left {
-    transform: translate3d(0, calc(-0.5 * var(--page-scroll-y, 0px)), 0);
-  }
-
-  .mobile-edge-side--right {
-    transform: translate3d(0, calc(0.5 * var(--page-scroll-y, 0px)), 0);
+    contain: paint;
   }
 
   /* Bordures iOS : proportions originales, une tuile, pas de repeat-y */
@@ -270,38 +266,5 @@ body {
     right: clamp(-1.6rem, -5vw, -0.9rem);
     background-image: url("/visuel 2 droite.webp");
     background-position: right top;
-  }
-
-  /* Android/desktop mobile : scroll-driven sur les bordures si supporté */
-  @supports (animation-timeline: scroll()) {
-    .mobile-edge-side--left {
-      animation: edge-parallax-left linear both;
-      animation-timeline: scroll(root);
-      transform: translate3d(0, calc(-0.5 * var(--page-scroll-y, 0px)), 0);
-    }
-
-    .mobile-edge-side--right {
-      animation: edge-parallax-right linear both;
-      animation-timeline: scroll(root);
-      transform: translate3d(0, calc(0.5 * var(--page-scroll-y, 0px)), 0);
-    }
-
-    /* iOS : scroll-driven désactivé, parallaxe JS uniquement */
-    .ios .mobile-edge-side--left,
-    .ios .mobile-edge-side--right {
-      animation: none !important;
-    }
-  }
-}
-
-@keyframes edge-parallax-left {
-  to {
-    transform: translateY(-40vh);
-  }
-}
-
-@keyframes edge-parallax-right {
-  to {
-    transform: translateY(40vh);
   }
 }

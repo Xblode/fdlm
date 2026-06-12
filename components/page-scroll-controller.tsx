@@ -5,6 +5,7 @@ import { isIOSDevice } from "@/lib/device";
 
 const HERO_VISUEL_MAX_X = 6;
 const HERO_VISUEL_MAX_Y = -2.5;
+const EDGE_PARALLAX = 0.4;
 const SNAP_THRESHOLD = 0.38;
 const SNAP_VEL_MIN = 0.12;
 
@@ -17,6 +18,8 @@ export function PageScrollController() {
     const root = document.documentElement;
     const heroRoot = document.getElementById("hero-root");
     const spacer = document.getElementById("hero-spacer");
+    const edgeLeft = document.getElementById("edge-left");
+    const edgeRight = document.getElementById("edge-right");
 
     if (!heroRoot || !spacer) return;
 
@@ -30,6 +33,7 @@ export function PageScrollController() {
       CSS.supports("animation-timeline: scroll()");
 
     let spacerHeight = spacer.offsetHeight || 1;
+    let scrollIdleTimer = 0;
 
     const visibilityObserver = new IntersectionObserver(
       ([entry]) => {
@@ -46,9 +50,15 @@ export function PageScrollController() {
       if (scrollY === lastScrollY) return;
       lastScrollY = scrollY;
 
-      // Mobile : parallaxe JS uniquement sur les immeubles (--page-scroll-y)
       if (isMobile) {
-        root.style.setProperty("--page-scroll-y", `${scrollY}px`);
+        // transform direct sur les 2 immeubles = compositor-only, pas de recalc CSS
+        const offset = Math.round(scrollY * EDGE_PARALLAX);
+        if (edgeLeft) {
+          edgeLeft.style.transform = `translate3d(0,${-offset}px,0)`;
+        }
+        if (edgeRight) {
+          edgeRight.style.transform = `translate3d(0,${offset}px,0)`;
+        }
         return;
       }
 
@@ -63,6 +73,12 @@ export function PageScrollController() {
     };
 
     const onScroll = () => {
+      root.classList.add("is-scrolling");
+      window.clearTimeout(scrollIdleTimer);
+      scrollIdleTimer = window.setTimeout(() => {
+        root.classList.remove("is-scrolling");
+      }, 150);
+
       if (scrollRaf) return;
       scrollRaf = requestAnimationFrame(() => {
         scrollRaf = 0;
@@ -137,6 +153,7 @@ export function PageScrollController() {
     window.addEventListener("resize", onResize, { passive: true });
 
     return () => {
+      window.clearTimeout(scrollIdleTimer);
       if (scrollRaf) cancelAnimationFrame(scrollRaf);
       visibilityObserver.disconnect();
       window.removeEventListener("scroll", onScroll);
@@ -145,9 +162,12 @@ export function PageScrollController() {
       window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("touchcancel", onTouchEnd);
       window.removeEventListener("resize", onResize);
+      root.classList.remove("is-scrolling");
       root.style.removeProperty("--page-scroll-y");
       heroRoot.classList.remove("hero-inactive");
       driftEl?.style.removeProperty("transform");
+      edgeLeft?.style.removeProperty("transform");
+      edgeRight?.style.removeProperty("transform");
     };
   }, []);
 
