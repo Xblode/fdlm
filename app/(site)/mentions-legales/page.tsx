@@ -36,7 +36,7 @@ export default function MentionsLegalesPage() {
 
         <Section title="Éditeur du site">
           <p>
-            Le présent site <strong className="text-brand-yellow">fdlm.boomkoeur.fr</strong> est édité par :
+            Le présent site <strong className="text-brand-yellow">perret.app</strong> est édité par :
           </p>
           <p>
             <strong className="text-brand-yellow">Benjamin Planchon</strong><br />
