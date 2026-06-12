@@ -210,7 +210,7 @@ export function LocationSection({
       <div className="mt-2">
         <FeaturedCarousel
           artists={carouselArtists}
-          showShuffleButton={isAllStylesView && filteredArtists.length > 1}
+          showShuffleButton={isAllStylesView && filteredArtists.length > 6}
           onShuffle={() => setArtistShuffleSeed(Date.now())}
         />
       </div>
