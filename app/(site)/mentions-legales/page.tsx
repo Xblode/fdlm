@@ -19,7 +19,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function MentionsLegalesPage() {
   return (
     <main className="flex flex-1 flex-col">
-      <section className="relative z-10 -mt-0 min-h-screen bg-brand-black px-4 pt-24 pb-16 text-brand-yellow">
+      <section className="relative z-10 min-h-screen bg-brand-black px-4 pt-[calc(var(--mobile-header-height)+1.5rem)] pb-16 text-brand-yellow">
         <Link
           href="/"
           className="mb-8 inline-flex items-center gap-2 text-sm text-brand-yellow/50 transition-colors hover:text-brand-yellow"
