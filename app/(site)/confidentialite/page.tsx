@@ -38,7 +38,7 @@ export default function ConfidentialitePage() {
           <p>
             <strong className="text-brand-yellow">Benjamin Planchon</strong><br />
             Le Havre, France<br />
-            Contact : <a href="mailto:contact@boomkoeur.fr" className="underline underline-offset-2">contact@boomkoeur.fr</a>
+            Contact : <a href="mailto:planchon.benjamin@outlook.fr" className="underline underline-offset-2">planchon.benjamin@outlook.fr</a>
           </p>
         </Section>
 
@@ -94,8 +94,8 @@ export default function ConfidentialitePage() {
           </ul>
           <p>
             Pour exercer ces droits, contactez-nous à :{" "}
-            <a href="mailto:contact@boomkoeur.fr" className="underline underline-offset-2">
-              contact@boomkoeur.fr
+            <a href="mailto:planchon.benjamin@outlook.fr" className="underline underline-offset-2">
+              planchon.benjamin@outlook.fr
             </a>
           </p>
           <p>
