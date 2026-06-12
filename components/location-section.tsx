@@ -3,12 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import {
-  artists,
-  eventInfo,
-  musicFilterStyles,
-  venues,
-} from "@/config/event";
+import { useSiteData } from "@/components/site-data-provider";
 import { FeaturedCarousel } from "@/components/featured-carousel";
 import { ChevronIcon } from "@/components/chevron-icon";
 import { MusicStyleFilters } from "@/components/music-style-filters";
@@ -78,6 +73,7 @@ export function LocationSection({
 }: {
   selectedCityId: string;
 }) {
+  const { venues, artists, musicFilterStyles, eventInfo } = useSiteData();
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const filterKey = `${selectedCityId}|${selectedStyle ?? ""}|${searchQuery}`;
@@ -106,7 +102,7 @@ export function LocationSection({
 
       return matchesCity && matchesStyle && matchesQuery;
     });
-  }, [selectedCityId, selectedStyle, searchQuery]);
+  }, [selectedCityId, selectedStyle, searchQuery, venues]);
 
   const totalPages = Math.max(
     1,
@@ -147,7 +143,7 @@ export function LocationSection({
 
       return matchesStyle && matchesQuery;
     });
-  }, [selectedCityId, selectedStyle, searchQuery]);
+  }, [selectedCityId, selectedStyle, searchQuery, venues, artists, eventInfo]);
 
   function goToPage(page: number) {
     setPageState({ filterKey, page });

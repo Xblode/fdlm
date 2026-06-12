@@ -1,18 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Venue } from "@/config/event";
-import { getArtistsForVenue } from "@/config/event";
 import { ChevronIcon } from "@/components/chevron-icon";
 import { VenueCardMedia } from "@/components/venue-card-media";
 
 type VenueDetailSectionProps = {
   venue: Venue;
+  artistCount: number;
 };
 
-function VenueDetail({ venue }: VenueDetailSectionProps) {
+function VenueDetail({ venue, artistCount }: VenueDetailSectionProps) {
   const hours = `${venue.hoursStart.toLowerCase()} – ${venue.hoursEnd.toLowerCase()}`;
-  const concertCount = getArtistsForVenue(venue.id).length;
-  const concertLabel = concertCount <= 1 ? "concert" : "concerts";
+  const concertLabel = artistCount <= 1 ? "concert" : "concerts";
 
   return (
     <>
@@ -37,7 +36,7 @@ function VenueDetail({ venue }: VenueDetailSectionProps) {
             Concerts
           </p>
           <p className="mt-2 font-display text-2xl leading-none uppercase tabular-nums">
-            {concertCount}
+            {artistCount}
           </p>
           <p className="mt-1 text-xs uppercase opacity-70">{concertLabel}</p>
         </div>
@@ -81,7 +80,7 @@ function VenueDetail({ venue }: VenueDetailSectionProps) {
   );
 }
 
-export function VenueDetailSection({ venue }: VenueDetailSectionProps) {
+export function VenueDetailSection({ venue, artistCount }: VenueDetailSectionProps) {
   return (
     <section
       id="location-section"
@@ -111,7 +110,7 @@ export function VenueDetailSection({ venue }: VenueDetailSectionProps) {
       </div>
 
       <div id="venue-detail" className="pt-2">
-        <VenueDetail venue={venue} />
+        <VenueDetail venue={venue} artistCount={artistCount} />
       </div>
     </section>
   );

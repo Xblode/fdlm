@@ -9,8 +9,8 @@ type AdminShellProps = {
 
 const NAV_ITEMS = [
   { href: "/admin/demandes", label: "Demandes", enabled: true },
-  { href: "/admin/lieux", label: "Lieux", enabled: false },
-  { href: "/admin/artistes", label: "Artistes", enabled: false },
+  { href: "/admin/lieux", label: "Lieux", enabled: true },
+  { href: "/admin/artistes", label: "Artistes", enabled: true },
 ] as const;
 
 export function AdminShell({ children }: AdminShellProps) {

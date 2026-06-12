@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { SubmissionStatus } from "@/config/submissions";
 import { ensureAdmin } from "@/lib/auth/ensure-admin";
+import { publishApprovedSubmission } from "@/lib/data/publish-submission";
 import {
   getSubmission,
   updateSubmissionStatus,
@@ -51,6 +52,29 @@ export async function PATCH(request: Request, context: RouteContext) {
       { ok: false, message: "Demande introuvable." },
       { status: 404 },
     );
+  }
+
+  if (existing.status === "approved" && status === "approved") {
+    return NextResponse.json({
+      ok: true,
+      message: "Demande déjà approuvée.",
+      data: existing,
+    });
+  }
+
+  if (status === "approved" && existing.status !== "approved") {
+    try {
+      await publishApprovedSubmission(existing.payload);
+    } catch (error) {
+      console.error("Publication automatique échouée:", error);
+      return NextResponse.json(
+        {
+          ok: false,
+          message: "Impossible de publier la demande approuvée.",
+        },
+        { status: 500 },
+      );
+    }
   }
 
   const updated = await updateSubmissionStatus(id, status as SubmissionStatus);

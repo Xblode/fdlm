@@ -1,7 +1,7 @@
 "use client";
 
 import type { Artist } from "@/config/event";
-import { eventInfo } from "@/config/event";
+import { useSiteData } from "@/components/site-data-provider";
 import { useProgram } from "@/components/program-provider";
 
 type ArtistCardProps = {
@@ -10,17 +10,19 @@ type ArtistCardProps = {
 };
 
 export function ArtistCard({ artist, venueName }: ArtistCardProps) {
+  const { eventInfo } = useSiteData();
   const location = venueName ?? eventInfo.venue;
   const { addToProgram, removeFromProgramByArtist, isInProgram } = useProgram();
-  const alreadyAdded = isInProgram(artist.name, location);
+  const alreadyAdded = isInProgram(artist.id);
 
-  function handleToggleProgram() {
+  async function handleToggleProgram() {
     if (alreadyAdded) {
-      removeFromProgramByArtist(artist.name, location);
+      await removeFromProgramByArtist(artist.id);
       return;
     }
 
-    addToProgram({
+    await addToProgram({
+      artistId: artist.id,
       artistName: artist.name,
       slot: artist.slot,
       genre: artist.genre,

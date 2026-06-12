@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useSyncExternalStore } from "react";
-import { eventInfo } from "@/config/event";
+import { eventMeta } from "@/lib/data/event-info";
 
 function subscribe() {
   return () => {};
@@ -61,7 +61,7 @@ export function DesktopMobilePrompt() {
         <div className="flex max-w-md flex-col items-center lg:items-start">
           <div className="inline-grid text-brand-yellow drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
             <p className="w-full text-center font-display text-5xl leading-none uppercase lg:text-left">
-              {eventInfo.dateShort}
+              {eventMeta.dateShort}
             </p>
             <p className="mt-1 w-full text-center font-year text-8xl leading-[0.85] uppercase tracking-tight lg:text-left">
               2026

@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { artists, eventInfo, venues } from "@/config/event";
 import type { ProgramEntry } from "@/components/program-provider";
 import { useProgram } from "@/components/program-provider";
+import { useSiteData } from "@/components/site-data-provider";
 import { ChevronIcon } from "@/components/chevron-icon";
 import { useBodyScrollLock } from "@/components/use-body-scroll-lock";
 import { useModalTransition } from "@/components/use-modal-transition";
@@ -36,7 +36,10 @@ function parseSlotHour(slot: string) {
   return match ? Number.parseInt(match[1], 10) : 0;
 }
 
-function getVenueName(venueId: string) {
+function getVenueName(
+  venueId: string,
+  venues: { id: string; name: string }[],
+) {
   return venues.find((venue) => venue.id === venueId)?.name ?? venueId;
 }
 
@@ -91,6 +94,7 @@ function ProgramEntryCard({ entry, onRemove }: ProgramEntryCardProps) {
 }
 
 type ProgramSuggestion = {
+  artistId: string;
   name: string;
   slot: string;
   genre: string;
@@ -176,6 +180,7 @@ function ProgramHourFilter({
 }
 
 export function ProgramPanel({ isOpen, onClose }: ProgramPanelProps) {
+  const { artists, venues, eventInfo } = useSiteData();
   const { entries, removeFromProgram, addToProgram, isInProgram } = useProgram();
   const [filterIndex, setFilterIndex] = useState(0);
 
@@ -196,13 +201,14 @@ export function ProgramPanel({ isOpen, onClose }: ProgramPanelProps) {
     return artists
       .filter((artist) => parseSlotHour(artist.slot) === currentFilter)
       .map((artist) => ({
+        artistId: artist.id,
         name: artist.name,
         slot: artist.slot,
         genre: artist.genre,
-        venueName: getVenueName(artist.venueId),
+        venueName: getVenueName(artist.venueId, venues),
       }))
-      .filter((artist) => !isInProgram(artist.name, artist.venueName));
-  }, [currentFilter, isInProgram]);
+      .filter((artist) => !isInProgram(artist.artistId));
+  }, [artists, venues, currentFilter, isInProgram]);
 
   const { isMounted, isVisible } = useModalTransition(isOpen);
 
@@ -242,7 +248,8 @@ export function ProgramPanel({ isOpen, onClose }: ProgramPanelProps) {
   }
 
   function handleAddSuggestion(suggestion: ProgramSuggestion) {
-    addToProgram({
+    void addToProgram({
+      artistId: suggestion.artistId,
       artistName: suggestion.name,
       slot: suggestion.slot,
       genre: suggestion.genre,

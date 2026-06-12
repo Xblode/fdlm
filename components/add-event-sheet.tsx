@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { BottomSheetPortal } from "@/components/bottom-sheet-portal";
 import { cities, getCityById } from "@/config/cities";
-import { musicFilterStyles, venues } from "@/config/event";
+import { useSiteData } from "@/components/site-data-provider";
 import { useBodyScrollLock } from "@/components/use-body-scroll-lock";
 import { useModalTransition } from "@/components/use-modal-transition";
 import type {
@@ -60,7 +60,6 @@ function TrashIcon() {
   );
 }
 
-const venueSuggestions = venues.map((venue) => venue.name);
 const availableCities = cities.filter((city) => city.available === true);
 
 function emptyArtistEntry(): VenueArtistEntry {
@@ -307,6 +306,11 @@ type AddEventSheetProps = {
 };
 
 export function AddEventSheet({ defaultCityId }: AddEventSheetProps) {
+  const { venues, musicFilterStyles } = useSiteData();
+  const venueSuggestions = useMemo(
+    () => venues.map((venue) => venue.name),
+    [venues],
+  );
   const [isOpen, setIsOpen] = useState(false);
   const { isMounted, isVisible } = useModalTransition(isOpen);
   const [submissionType, setSubmissionType] = useState<SubmissionType>("artist");

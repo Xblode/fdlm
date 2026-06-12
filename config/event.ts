@@ -72,6 +72,7 @@ export const venues: Venue[] = [
 ];
 
 export type Artist = {
+  id: string;
   name: string;
   slot: string;
   genre: string;
@@ -79,8 +80,20 @@ export type Artist = {
 };
 
 export const artists: Artist[] = [
-  { name: "Flowtapage", slot: "22h00", genre: "Techno", venueId: "eau-tarie" },
-  { name: "Noctyra", slot: "23h30", genre: "Techno", venueId: "eau-tarie" },
+  {
+    id: "00000000-0000-4000-8000-000000000001",
+    name: "Flowtapage",
+    slot: "22h00",
+    genre: "Techno",
+    venueId: "eau-tarie",
+  },
+  {
+    id: "00000000-0000-4000-8000-000000000002",
+    name: "Noctyra",
+    slot: "23h30",
+    genre: "Techno",
+    venueId: "eau-tarie",
+  },
 ];
 
 export function getArtistsForVenue(venueId: string) {

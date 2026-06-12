@@ -1,15 +1,13 @@
 import Image from "next/image";
-import type { Venue } from "@/config/event";
-import { getArtistsForVenue } from "@/config/event";
+import type { Artist, Venue } from "@/config/event";
 import { ArtistCard } from "@/components/artist-card";
 
 type ArtistsSectionProps = {
   venue: Venue;
+  artists: Artist[];
 };
 
-export function ArtistsSection({ venue }: ArtistsSectionProps) {
-  const venueArtists = getArtistsForVenue(venue.id);
-
+export function ArtistsSection({ venue, artists }: ArtistsSectionProps) {
   return (
     <section
       id="agenda"
@@ -30,9 +28,9 @@ export function ArtistsSection({ venue }: ArtistsSectionProps) {
       </div>
 
       <div className="flex flex-col gap-6 pt-2">
-        {venueArtists.map((artist) => (
+        {artists.map((artist) => (
           <ArtistCard
-            key={artist.name}
+            key={artist.id}
             artist={artist}
             venueName={venue.name}
           />

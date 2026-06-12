@@ -3,8 +3,8 @@
 import Link from "next/link";
 import type { Partner } from "@/config/partners";
 import { partners } from "@/config/partners";
-import { eventInfo } from "@/config/event";
 import { siteConfig } from "@/config/site";
+import { useSiteData } from "@/components/site-data-provider";
 import { CityPicker } from "@/components/city-picker";
 
 function scrollToSection(id: string) {
@@ -109,6 +109,7 @@ export function MobileFooter({
   onCityChange: (cityId: string) => void;
 }) {
   const { author, instagram, behance } = siteConfig.credits;
+  const { eventInfo } = useSiteData();
 
   return (
     <footer className="relative z-10 -mt-6 overflow-hidden rounded-t-3xl bg-brand-black text-brand-yellow">

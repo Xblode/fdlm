@@ -12,6 +12,7 @@ import {
 
 export type ProgramEntry = {
   id: string;
+  artistId: string;
   artistName: string;
   slot: string;
   genre: string;
@@ -20,95 +21,126 @@ export type ProgramEntry = {
 
 type ProgramContextValue = {
   entries: ProgramEntry[];
-  addToProgram: (entry: Omit<ProgramEntry, "id">) => void;
-  removeFromProgram: (id: string) => void;
-  removeFromProgramByArtist: (artistName: string, venueName: string) => void;
-  isInProgram: (artistName: string, venueName: string) => boolean;
+  isReady: boolean;
+  addToProgram: (entry: Omit<ProgramEntry, "id">) => Promise<void>;
+  removeFromProgram: (artistId: string) => Promise<void>;
+  removeFromProgramByArtist: (artistId: string) => Promise<void>;
+  isInProgram: (artistId: string) => boolean;
 };
 
 const ProgramContext = createContext<ProgramContextValue | null>(null);
 
-const PROGRAM_STORAGE_KEY = "fdlm-program";
+const USER_UUID_STORAGE_KEY = "fdlm-user-uuid";
 
-function buildProgramEntryId(artistName: string, venueName: string) {
-  return `${artistName.toLowerCase()}::${venueName.toLowerCase()}`;
-}
+function getOrCreateUserUuid() {
+  const existing = localStorage.getItem(USER_UUID_STORAGE_KEY);
+  if (existing) return existing;
 
-function readStoredEntries(): ProgramEntry[] {
-  if (typeof window === "undefined") return [];
-
-  try {
-    const raw = localStorage.getItem(PROGRAM_STORAGE_KEY);
-    if (!raw) return [];
-
-    const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) return [];
-
-    return parsed.filter(
-      (item): item is ProgramEntry =>
-        typeof item === "object" &&
-        item !== null &&
-        typeof item.id === "string" &&
-        typeof item.artistName === "string" &&
-        typeof item.slot === "string" &&
-        typeof item.genre === "string" &&
-        typeof item.venueName === "string",
-    );
-  } catch {
-    return [];
-  }
+  const uuid = crypto.randomUUID();
+  localStorage.setItem(USER_UUID_STORAGE_KEY, uuid);
+  return uuid;
 }
 
 export function ProgramProvider({ children }: { children: ReactNode }) {
   const [entries, setEntries] = useState<ProgramEntry[]>([]);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [userUuid, setUserUuid] = useState<string | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const stored = readStoredEntries();
-    // Hydratation client depuis localStorage après le montage (SSR → client)
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- pattern d'hydratation localStorage
-    setEntries(stored);
-    setIsHydrated(true);
+    const uuid = getOrCreateUserUuid();
+    setUserUuid(uuid);
+
+    fetch(`/api/program?uuid=${encodeURIComponent(uuid)}`)
+      .then((response) => response.json())
+      .then((payload) => {
+        if (payload.ok && Array.isArray(payload.data)) {
+          setEntries(payload.data);
+        }
+      })
+      .catch(() => {
+        setEntries([]);
+      })
+      .finally(() => {
+        setIsReady(true);
+      });
   }, []);
 
-  useEffect(() => {
-    if (!isHydrated) return;
+  const addToProgram = useCallback(
+    async (entry: Omit<ProgramEntry, "id">) => {
+      if (!userUuid) return;
 
-    localStorage.setItem(PROGRAM_STORAGE_KEY, JSON.stringify(entries));
-  }, [entries, isHydrated]);
+      setEntries((current) => {
+        if (current.some((item) => item.artistId === entry.artistId)) {
+          return current;
+        }
 
-  const addToProgram = useCallback((entry: Omit<ProgramEntry, "id">) => {
-    const id = buildProgramEntryId(entry.artistName, entry.venueName);
+        return [...current, { ...entry, id: entry.artistId }];
+      });
 
-    setEntries((current) => {
-      if (current.some((item) => item.id === id)) return current;
-      return [...current, { ...entry, id }];
-    });
-  }, []);
+      try {
+        const response = await fetch("/api/program", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ uuid: userUuid, ...entry }),
+        });
 
-  const removeFromProgram = useCallback((id: string) => {
-    setEntries((current) => current.filter((item) => item.id !== id));
-  }, []);
+        const payload = await response.json();
 
-  const removeFromProgramByArtist = useCallback(
-    (artistName: string, venueName: string) => {
-      const id = buildProgramEntryId(artistName, venueName);
-      setEntries((current) => current.filter((item) => item.id !== id));
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.message ?? "Erreur programme");
+        }
+
+        setEntries((current) => {
+          const without = current.filter(
+            (item) => item.artistId !== entry.artistId,
+          );
+          return [...without, payload.data as ProgramEntry];
+        });
+      } catch {
+        setEntries((current) =>
+          current.filter((item) => item.artistId !== entry.artistId),
+        );
+      }
     },
-    [],
+    [userUuid],
   );
 
-  const isInProgram = useCallback(
-    (artistName: string, venueName: string) => {
-      const id = buildProgramEntryId(artistName, venueName);
-      return entries.some((item) => item.id === id);
+  const removeFromProgram = useCallback(
+    async (artistId: string) => {
+      if (!userUuid) return;
+
+      setEntries((current) => current.filter((item) => item.artistId !== artistId));
+
+      try {
+        await fetch("/api/program", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ uuid: userUuid, artistId }),
+        });
+      } catch {
+        const response = await fetch(
+          `/api/program?uuid=${encodeURIComponent(userUuid)}`,
+        );
+        const payload = await response.json();
+        if (payload.ok && Array.isArray(payload.data)) {
+          setEntries(payload.data);
+        }
+      }
     },
+    [userUuid],
+  );
+
+  const removeFromProgramByArtist = removeFromProgram;
+
+  const isInProgram = useCallback(
+    (artistId: string) => entries.some((item) => item.artistId === artistId),
     [entries],
   );
 
   const value = useMemo(
     () => ({
       entries,
+      isReady,
       addToProgram,
       removeFromProgram,
       removeFromProgramByArtist,
@@ -116,6 +148,7 @@ export function ProgramProvider({ children }: { children: ReactNode }) {
     }),
     [
       entries,
+      isReady,
       addToProgram,
       removeFromProgram,
       removeFromProgramByArtist,

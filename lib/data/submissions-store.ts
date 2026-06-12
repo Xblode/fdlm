@@ -1,82 +1,82 @@
-import { randomUUID } from "crypto";
-import { promises as fs } from "fs";
-import path from "path";
 import type {
   EventSubmission,
   StoredSubmission,
   SubmissionStatus,
 } from "@/config/submissions";
+import type { DbSubmission } from "@/lib/data/db-types";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
 
-const DATA_DIR = path.join(process.cwd(), "data");
-const DATA_FILE = path.join(DATA_DIR, "submissions.json");
-
-async function ensureDataFile() {
-  await fs.mkdir(DATA_DIR, { recursive: true });
-
-  try {
-    await fs.access(DATA_FILE);
-  } catch {
-    await fs.writeFile(DATA_FILE, "[]", "utf-8");
-  }
-}
-
-async function readAll(): Promise<StoredSubmission[]> {
-  await ensureDataFile();
-  const raw = await fs.readFile(DATA_FILE, "utf-8");
-  const parsed = JSON.parse(raw) as StoredSubmission[];
-
-  return Array.isArray(parsed) ? parsed : [];
-}
-
-async function writeAll(submissions: StoredSubmission[]) {
-  await ensureDataFile();
-  await fs.writeFile(DATA_FILE, JSON.stringify(submissions, null, 2), "utf-8");
+function mapSubmission(row: DbSubmission): StoredSubmission {
+  return {
+    id: row.id,
+    status: row.status,
+    createdAt: row.created_at,
+    reviewedAt: row.reviewed_at ?? undefined,
+    payload: row.payload as EventSubmission,
+  };
 }
 
 export async function createSubmission(payload: EventSubmission) {
-  const submissions = await readAll();
-  const entry: StoredSubmission = {
-    id: randomUUID(),
-    status: "pending",
-    createdAt: new Date().toISOString(),
-    payload,
-  };
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("event_submissions")
+    .insert({ payload, status: "pending" })
+    .select("*")
+    .single();
 
-  submissions.unshift(entry);
-  await writeAll(submissions);
+  if (error) throw error;
 
-  return entry;
+  return mapSubmission(data as DbSubmission);
 }
 
 export async function listSubmissions(status?: SubmissionStatus) {
-  const submissions = await readAll();
+  const supabase = createServerSupabaseClient();
+  let query = supabase
+    .from("event_submissions")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-  if (!status) return submissions;
+  if (status) {
+    query = query.eq("status", status);
+  }
 
-  return submissions.filter((submission) => submission.status === status);
+  const { data, error } = await query;
+
+  if (error) throw error;
+
+  return (data as DbSubmission[]).map(mapSubmission);
 }
 
 export async function getSubmission(id: string) {
-  const submissions = await readAll();
-  return submissions.find((submission) => submission.id === id) ?? null;
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("event_submissions")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!data) return null;
+
+  return mapSubmission(data as DbSubmission);
 }
 
 export async function updateSubmissionStatus(
   id: string,
   status: SubmissionStatus,
 ) {
-  const submissions = await readAll();
-  const index = submissions.findIndex((submission) => submission.id === id);
+  const supabase = createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from("event_submissions")
+    .update({
+      status,
+      reviewed_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select("*")
+    .single();
 
-  if (index === -1) return null;
+  if (error) throw error;
 
-  submissions[index] = {
-    ...submissions[index],
-    status,
-    reviewedAt: new Date().toISOString(),
-  };
-
-  await writeAll(submissions);
-
-  return submissions[index];
+  return mapSubmission(data as DbSubmission);
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import type { Venue } from "@/config/event";
+import type { Artist, Venue } from "@/config/event";
 import { VenueDetailSection } from "@/components/venue-detail-section";
 import { ArtistsSection } from "@/components/artists-section";
 import { TransportSection } from "@/components/transport-section";
@@ -12,15 +12,16 @@ import { ScrollToTopButton } from "@/components/scroll-to-top-button";
 
 type VenuePageContentProps = {
   venue: Venue;
+  artists: Artist[];
 };
 
-export function VenuePageContent({ venue }: VenuePageContentProps) {
+export function VenuePageContent({ venue, artists }: VenuePageContentProps) {
   const router = useRouter();
 
   return (
     <main className="flex flex-1 flex-col">
-      <VenueDetailSection venue={venue} />
-      <ArtistsSection venue={venue} />
+      <VenueDetailSection venue={venue} artistCount={artists.length} />
+      <ArtistsSection venue={venue} artists={artists} />
       <RdrSection />
       <TransportSection />
       <AddEventCtaSection selectedCityId={venue.cityId} />

@@ -2,29 +2,31 @@
 
 import Image from "next/image";
 import type { Artist } from "@/config/event";
-import { venues } from "@/config/event";
+import { useSiteData } from "@/components/site-data-provider";
 import { useProgram } from "@/components/program-provider";
 
 type FeaturedCarouselProps = {
   artists: Artist[];
 };
 
-function getVenueName(venueId: string) {
-  return venues.find((venue) => venue.id === venueId)?.name ?? venueId;
-}
-
-function FeaturedArtistCard({ artist }: { artist: Artist }) {
-  const venueName = getVenueName(artist.venueId);
+function FeaturedArtistCard({
+  artist,
+  venueName,
+}: {
+  artist: Artist;
+  venueName: string;
+}) {
   const { addToProgram, removeFromProgramByArtist, isInProgram } = useProgram();
-  const alreadyAdded = isInProgram(artist.name, venueName);
+  const alreadyAdded = isInProgram(artist.id);
 
-  function handleToggleProgram() {
+  async function handleToggleProgram() {
     if (alreadyAdded) {
-      removeFromProgramByArtist(artist.name, venueName);
+      await removeFromProgramByArtist(artist.id);
       return;
     }
 
-    addToProgram({
+    await addToProgram({
+      artistId: artist.id,
       artistName: artist.name,
       slot: artist.slot,
       genre: artist.genre,
@@ -49,7 +51,7 @@ function FeaturedArtistCard({ artist }: { artist: Artist }) {
 
           <button
             type="button"
-            onClick={handleToggleProgram}
+            onClick={() => void handleToggleProgram()}
             aria-label={
               alreadyAdded
                 ? `Retirer ${artist.name} du programme`
@@ -70,6 +72,8 @@ function FeaturedArtistCard({ artist }: { artist: Artist }) {
 }
 
 export function FeaturedCarousel({ artists }: FeaturedCarouselProps) {
+  const { venues } = useSiteData();
+
   if (artists.length === 0) return null;
 
   return (
@@ -91,7 +95,14 @@ export function FeaturedCarousel({ artists }: FeaturedCarouselProps) {
       <div className="hide-scrollbar -mx-4 overflow-x-auto py-3">
         <div className="flex w-max snap-x snap-mandatory gap-4 px-4">
           {artists.map((artist) => (
-            <FeaturedArtistCard key={artist.name} artist={artist} />
+            <FeaturedArtistCard
+              key={artist.id}
+              artist={artist}
+              venueName={
+                venues.find((venue) => venue.id === artist.venueId)?.name ??
+                artist.venueId
+              }
+            />
           ))}
         </div>
       </div>
