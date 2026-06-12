@@ -87,6 +87,10 @@ export function getArtistsForVenue(venueId: string) {
   return artists.filter((artist) => artist.venueId === venueId);
 }
 
+export function getVenueById(venueId: string) {
+  return venues.find((venue) => venue.id === venueId);
+}
+
 const priorityMusicStyles = ["Techno", "Rock", "House"];
 
 export const musicFilterStyles = [

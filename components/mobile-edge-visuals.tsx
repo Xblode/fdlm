@@ -1,4 +1,12 @@
+"use client";
+
+import { useIsVenuePage } from "@/lib/use-is-venue-page";
+
 export function MobileEdgeVisuals() {
+  const isVenuePage = useIsVenuePage();
+
+  if (isVenuePage) return null;
+
   return (
     <>
       <div

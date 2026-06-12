@@ -78,7 +78,7 @@ export function CityPicker({
           {selectedCity.name}
         </span>
 
-        <ChevronIcon direction="down" className="size-6 shrink-0" />
+        <ChevronIcon direction="down" className="size-5 shrink-0" />
       </button>
 
       {isMounted ? (

@@ -10,24 +10,6 @@ import { ChevronIcon } from "@/components/chevron-icon";
 
 const POSTER_TILTS = [-4, 3, -2, 5, -3, 4, -5, 2];
 
-function ShieldIcon({ className = "size-5" }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" />
-      <path d="M9 12l2 2 4-4" />
-    </svg>
-  );
-}
-
 function TapeCorner({ className = "" }: { className?: string }) {
   return (
     <span
@@ -138,7 +120,7 @@ export function RdrSection() {
             </p>
             <p
               key={activePoster.id}
-              className="mt-1 font-display text-2xl leading-none uppercase transition-opacity duration-300"
+              className="mt-1 min-h-12 font-display text-2xl leading-none uppercase transition-opacity duration-300"
             >
               {activePoster.title}
             </p>
@@ -212,7 +194,6 @@ export function RdrSection() {
           href={rdrContent.orderHref}
           className="mt-8 flex h-14 w-full items-center justify-center gap-2 rounded-full border-2 border-brand-yellow bg-brand-yellow px-5 text-center font-display text-lg tracking-wide text-brand-black uppercase transition-transform active:scale-[0.98]"
         >
-          <ShieldIcon className="size-5" />
           {rdrContent.orderLabel}
         </a>
       </div>

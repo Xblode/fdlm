@@ -52,11 +52,16 @@ export function MobileHeader() {
 
   useEffect(() => {
     const heroSpacer = document.getElementById("hero-spacer");
-    if (!heroSpacer) return;
 
     const updateHeader = () => {
       const headerEl = document.querySelector(".mobile-app > header");
       const headerHeight = headerEl?.getBoundingClientRect().height ?? 64;
+
+      if (!heroSpacer) {
+        setIsCompact(true);
+        return;
+      }
+
       const contentEl = document.querySelector(".mobile-app > div.relative.z-10");
       const contentTop = contentEl?.getBoundingClientRect().top ?? Infinity;
       setIsCompact(contentTop <= headerHeight);

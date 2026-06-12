@@ -5,7 +5,6 @@ import type { Partner } from "@/config/partners";
 import { partners } from "@/config/partners";
 import { eventInfo } from "@/config/event";
 import { siteConfig } from "@/config/site";
-import { AddEventSheet } from "@/components/add-event-sheet";
 import { CityPicker } from "@/components/city-picker";
 
 function scrollToSection(id: string) {
@@ -114,7 +113,7 @@ export function MobileFooter({
   return (
     <footer className="relative z-10 -mt-6 overflow-hidden rounded-t-3xl bg-brand-black text-brand-yellow">
       <div className="px-4 pt-14 pb-6">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-end justify-between gap-4">
           <div
             role="img"
             aria-label="Fête de la musique"
@@ -143,7 +142,6 @@ export function MobileFooter({
           >
             Agenda
           </button>
-          <AddEventSheet defaultCityId={selectedCityId} />
         </div>
 
         <Link

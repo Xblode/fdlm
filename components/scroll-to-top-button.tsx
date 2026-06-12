@@ -22,7 +22,8 @@ export function ScrollToTopButton() {
       const scrollBottom = Math.ceil(scrollY + viewportHeight);
       const nearBottom =
         scrollBottom >= Math.floor(pageHeight) - BOTTOM_THRESHOLD_PX;
-      const pastHero = scrollY > heroHeight * 0.35;
+      const pastHero =
+        heroHeight > 0 ? scrollY > heroHeight * 0.35 : scrollY > 120;
 
       setIsVisible(pastHero && nearBottom);
     }
@@ -58,7 +59,7 @@ export function ScrollToTopButton() {
           : "pointer-events-none translate-y-3 opacity-0"
       }`}
     >
-      <ChevronIcon direction="up" className="size-6 text-brand-yellow" />
+      <ChevronIcon direction="up" className="size-5 text-brand-yellow" />
     </button>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef } from "react";
 import type { Venue } from "@/config/event";
 import { ChevronIcon } from "@/components/chevron-icon";
@@ -22,15 +23,14 @@ function VenueImageSeparator({ imageSrc }: { imageSrc?: string }) {
 
 type VenueCardProps = {
   venue: Venue;
-  onSelect?: () => void;
 };
 
-export function VenueCard({ venue, onSelect }: VenueCardProps) {
+export function VenueCard({ venue }: VenueCardProps) {
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
   return (
-    <button
-      type="button"
+    <Link
+      href={`/lieux/${venue.id}`}
       onTouchStart={(e) => {
         const t = e.touches[0];
         if (t) touchStartRef.current = { x: t.clientX, y: t.clientY };
@@ -48,7 +48,6 @@ export function VenueCard({ venue, onSelect }: VenueCardProps) {
         }
         touchStartRef.current = null;
       }}
-      onClick={onSelect}
       className="group flex h-[280px] w-full flex-col overflow-hidden rounded-3xl border-2 border-brand-black bg-white text-left shadow-[4px_4px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
     >
       <div className="flex shrink-0 items-start justify-between gap-4 p-5">
@@ -98,6 +97,6 @@ export function VenueCard({ venue, onSelect }: VenueCardProps) {
         </div>
         <ChevronIcon className="size-5 shrink-0 text-brand-black transition-transform duration-300 ease-out group-hover:translate-x-1.5" />
       </div>
-    </button>
+    </Link>
   );
 }

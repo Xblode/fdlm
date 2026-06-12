@@ -1,11 +1,18 @@
+"use client";
+
 import Image from "next/image";
 import { HeroProgramActions } from "@/components/hero-program-actions";
 import { HeroCountdown } from "@/components/hero-countdown";
+import { useIsVenuePage } from "@/lib/use-is-venue-page";
 
 const heroLayerClassName =
   "mobile-hero-height pointer-events-none fixed top-[var(--mobile-header-height)] right-0 left-0 md:hidden";
 
 export function MobileHeroContent() {
+  const isVenuePage = useIsVenuePage();
+
+  if (isVenuePage) return null;
+
   return (
     <>
       {/* Enfant direct de #hero-root — z-index vs immeubles latéraux (display: contents) */}
