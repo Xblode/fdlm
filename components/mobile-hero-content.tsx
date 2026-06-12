@@ -48,7 +48,7 @@ export function MobileHeroContent() {
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-6">
             <div
               id="hero-ui-content"
-              className="pointer-events-auto flex w-full max-w-[19rem] flex-col items-center gap-6"
+              className="pointer-events-auto flex w-full max-w-[19rem] translate-y-[25px] flex-col items-center gap-6"
             >
               <HeroCountdown />
               <HeroProgramActions />
