@@ -163,12 +163,12 @@ a {
     background-image: url("/building.png");
     background-repeat: no-repeat;
     background-size: 27% auto;
-    background-position: right top;
   }
 
   .mobile-edge-side__building--left {
+    background-position: left top;
     transform: scaleX(-1);
-    transform-origin: right top;
+    transform-origin: left top;
   }
 
   /* Bordures iOS : proportions originales, une tuile, pas de repeat-y */
