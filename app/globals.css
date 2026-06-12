@@ -178,7 +178,7 @@ a {
     background-image: url("/building.png");
     background-position: right top;
     background-repeat: no-repeat;
-    background-size: 62% auto;
+    background-size: 42% auto;
   }
 
   /* mix-blend-mode très coûteux sur iOS */
@@ -269,6 +269,6 @@ body {
     background-image: url("/building.png");
     background-position: right top;
     background-repeat: no-repeat;
-    background-size: 62% auto;
+    background-size: 42% auto;
   }
 }
