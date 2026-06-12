@@ -115,18 +115,19 @@ export function RdrSection() {
       />
 
       <div className="relative">
-        <div className="flex items-center gap-2.5">
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-full border-2 border-brand-yellow bg-brand-yellow text-brand-black">
-            <ShieldIcon className="size-4" />
-          </span>
-          <p className="font-display text-sm tracking-[0.2em] uppercase text-brand-yellow/70">
-            {rdrContent.eyebrow}
-          </p>
+        <div className="flex items-center gap-3">
+          <Image
+            src="/1x/Fichier 6.png"
+            alt=""
+            width={69}
+            height={69}
+            className="h-5 w-auto shrink-0 object-contain"
+            aria-hidden
+          />
+          <h2 className="font-display text-4xl leading-[0.95] uppercase">
+            {rdrContent.title}
+          </h2>
         </div>
-
-        <h2 className="mt-3 font-display text-4xl leading-[0.95] uppercase">
-          {rdrContent.title}
-        </h2>
 
         <p className="mt-3 max-w-prose text-sm leading-relaxed text-brand-yellow/80">
           {rdrContent.description}

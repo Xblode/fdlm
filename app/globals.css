@@ -152,7 +152,7 @@ a {
     will-change: auto;
   }
 
-  /* Immeubles : bandeaux au bord (building.png 1021×14412) */
+  /* Immeubles : bandeaux au bord (building.webp 1021×14412) */
   .mobile-edge-side {
     top: 0;
     height: var(--mobile-vh, 100svh);
@@ -171,7 +171,7 @@ a {
   .mobile-edge-side__building {
     position: absolute;
     inset: 0;
-    background-image: url("/building.png");
+    background-image: url("/building.webp");
     background-repeat: no-repeat;
     background-size: calc(var(--mobile-vh, 100svh) * 3508 / 4961 * 0.27) auto;
   }
