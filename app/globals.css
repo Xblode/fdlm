@@ -171,12 +171,12 @@ a {
 
   .mobile-edge-side--left {
     left: 0;
-    transform: translateX(-20%);
+    transform: translateX(-17%);
   }
 
   .mobile-edge-side--right {
     right: 0;
-    transform: translateX(20%);
+    transform: translateX(17%);
   }
 
   .mobile-edge-side__building {
