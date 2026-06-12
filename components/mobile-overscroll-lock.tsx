@@ -49,12 +49,11 @@ export function MobileOverscrollLock() {
 
       const scrollable = getScrollableAncestor(event.target);
       if (scrollable) {
-        const atTop = scrollable.scrollTop <= 0;
         const atBottom =
           scrollable.scrollTop + scrollable.clientHeight >=
           scrollable.scrollHeight - 1;
 
-        if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) {
+        if (atBottom && deltaY < 0) {
           event.preventDefault();
         }
         return;
@@ -63,11 +62,6 @@ export function MobileOverscrollLock() {
       const scrollTop = window.scrollY;
       const maxScroll =
         document.documentElement.scrollHeight - window.innerHeight;
-
-      if (scrollTop <= 0 && deltaY > 0) {
-        event.preventDefault();
-        return;
-      }
 
       if (scrollTop >= maxScroll - 1 && deltaY < 0) {
         event.preventDefault();

@@ -220,7 +220,6 @@ body {
 @media (max-width: 767px) {
   html {
     overflow-y: auto;
-    overscroll-behavior-y: none;
     scrollbar-width: none;
     -ms-overflow-style: none;
     isolation: isolate;
@@ -247,7 +246,6 @@ body {
     position: relative;
     z-index: 1;
     overflow-y: visible;
-    overscroll-behavior-y: none;
     height: auto;
     background: transparent;
   }

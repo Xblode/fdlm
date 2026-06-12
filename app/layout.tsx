@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Anton, Bebas_Neue, Geist, Geist_Mono } from "next/font/google";
 import { SharedGradientFilter } from "@/components/shared-gradient-filter";
+import { getSiteUrl } from "@/config/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,11 +26,10 @@ const anton = Anton({
   subsets: ["latin"],
 });
 
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000");
+const siteUrl = getSiteUrl();
+const socialDescription =
+  "Agenda, lieux et artistes — Fête de la musique 2026";
+const ogImageUrl = `${siteUrl}/og-image.webp`;
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -57,25 +57,26 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Fête de la musique 2026",
-    description: "Agenda, lieux et artistes — Fête de la musique 2026",
+    description: socialDescription,
     url: "/",
     siteName: "Fête de la musique 2026",
     locale: "fr_FR",
     type: "website",
     images: [
       {
-        url: "/paysage.png",
+        url: ogImageUrl,
         width: 1920,
         height: 1080,
         alt: "Fête de la musique 2026",
+        type: "image/webp",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Fête de la musique 2026",
-    description: "Agenda, lieux et artistes — Fête de la musique 2026",
-    images: ["/paysage.png"],
+    description: socialDescription,
+    images: [ogImageUrl],
   },
 };
 
