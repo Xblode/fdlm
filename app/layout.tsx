@@ -25,6 +25,12 @@ const anton = Anton({
   subsets: ["latin"],
 });
 
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000");
+
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -33,6 +39,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Fête de la musique 2026",
   description: "Expérience mobile — Fête de la musique 2026",
   manifest: "/manifest.webmanifest",
@@ -41,7 +48,34 @@ export const metadata: Metadata = {
     title: "FDLM 2026",
   },
   icons: {
-    apple: "/logo.webp",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "Fête de la musique 2026",
+    description: "Agenda, lieux et artistes — Fête de la musique 2026",
+    url: "/",
+    siteName: "Fête de la musique 2026",
+    locale: "fr_FR",
+    type: "website",
+    images: [
+      {
+        url: "/paysage.png",
+        width: 1920,
+        height: 1080,
+        alt: "Fête de la musique 2026",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Fête de la musique 2026",
+    description: "Agenda, lieux et artistes — Fête de la musique 2026",
+    images: ["/paysage.png"],
   },
 };
 
