@@ -132,6 +132,9 @@ export function PageScrollController() {
     const onTouchEnd = () => {
       if (isSnapping) return;
 
+      // Snap uniquement si le hero spacer est présent (page d'accueil)
+      if (!document.getElementById("hero-spacer")) return;
+
       const scrollY = window.scrollY;
 
       // Geste démarré depuis le contenu (sous spacerHeight) : étape intermédiaire
