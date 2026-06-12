@@ -8,6 +8,10 @@ const HERO_VISUEL_MAX_Y = -2.5;
 const SNAP_THRESHOLD = 0.38;
 const SNAP_VEL_MIN = 0.12;
 
+function isMobileViewport() {
+  return window.matchMedia("(max-width: 767px)").matches;
+}
+
 export function PageScrollController() {
   useEffect(() => {
     const root = document.documentElement;
@@ -18,9 +22,12 @@ export function PageScrollController() {
 
     const driftEl = heroRoot.querySelector<HTMLElement>(".hero-visuel-drift");
     const isIOS = isIOSDevice();
+    const isMobile = isMobileViewport();
 
     const useNativeScrollAnim =
-      !isIOS && CSS.supports("animation-timeline: scroll()");
+      !isIOS &&
+      !isMobile &&
+      CSS.supports("animation-timeline: scroll()");
 
     let spacerHeight = spacer.offsetHeight || 1;
 
@@ -39,8 +46,11 @@ export function PageScrollController() {
       if (scrollY === lastScrollY) return;
       lastScrollY = scrollY;
 
-      // iOS : pas de parallaxe JS — scroll plus fluide, bordures statiques
-      if (isIOS) return;
+      // Mobile : parallaxe JS uniquement sur les immeubles (--page-scroll-y)
+      if (isMobile) {
+        root.style.setProperty("--page-scroll-y", `${scrollY}px`);
+        return;
+      }
 
       if (!useNativeScrollAnim) {
         root.style.setProperty("--page-scroll-y", `${scrollY}px`);

@@ -66,19 +66,19 @@ a {
 
 .hero-visuel-drift {
   will-change: transform;
-  /* État initial — JS overrides via style.transform sur les anciens navigateurs */
   transform: scale(0.9) translate3d(0, 0, 0);
 }
 
-/* Sur les navigateurs modernes (iOS 16+, Chrome 115+) : parallaxe 100% CSS,
-   zéro JS, entièrement sur le compositor thread */
+/* Desktop : parallaxe hero via scroll-driven CSS */
 @supports (animation-timeline: scroll()) {
-  .hero-visuel-drift {
-    animation-name: hero-visuel-drift-scroll;
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-    animation-timeline: scroll(root);
-    animation-range: 0px calc(100svh - 4rem);
+  @media (min-width: 768px) {
+    .hero-visuel-drift {
+      animation-name: hero-visuel-drift-scroll;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0px calc(100svh - 4rem);
+    }
   }
 }
 
@@ -137,18 +137,31 @@ a {
 
 /* iOS Safari : mode safe — évite les crashs mémoire du navigateur */
 @media (max-width: 767px) {
-  .ios .hero-visuel-float,
+  /* Hero : pas de parallaxe scroll, seulement le float auto sur l'enfant */
+  .hero-visuel-drift {
+    animation: none !important;
+    will-change: auto;
+    transform: scale(0.9) translate3d(0, 0, 0);
+  }
+
   .ios .hero-btn-arrow {
-    animation: none !important;
     will-change: auto;
   }
 
-  .ios .hero-visuel-drift {
-    animation: none !important;
-    will-change: auto;
+  /* Immeubles : parallaxe JS légère via --page-scroll-y */
+  .mobile-edge-side {
+    will-change: transform;
   }
 
-  /* Bordures latérales iOS : proportions originales, statiques, sans parallaxe */
+  .mobile-edge-side--left {
+    transform: translate3d(0, calc(-0.5 * var(--page-scroll-y, 0px)), 0);
+  }
+
+  .mobile-edge-side--right {
+    transform: translate3d(0, calc(0.5 * var(--page-scroll-y, 0px)), 0);
+  }
+
+  /* Bordures iOS : proportions originales, une tuile, pas de repeat-y */
   .ios .mobile-edge-side {
     top: 0;
     height: var(--mobile-vh, 100svh);
@@ -156,15 +169,11 @@ a {
     background-size: auto var(--mobile-vh, 100svh);
     background-repeat: no-repeat;
     contain: paint;
-    will-change: auto;
-    transform: none !important;
-    animation: none !important;
   }
 
   .ios .mobile-edge-side--left {
     left: clamp(-1.6rem, -5vw, -0.9rem);
     background-image: url("/visuel 2 gauche.webp");
-    /* Ancrer côté intérieur pour montrer plus de façade */
     background-position: right top;
   }
 
@@ -249,42 +258,38 @@ body {
     width: calc(var(--mobile-vh, 100svh) * 3508 / 4961);
     background-size: auto var(--mobile-vh, 100svh);
     background-repeat: repeat-y;
-    will-change: transform;
   }
 
   .mobile-edge-side--left {
     left: clamp(-1.6rem, -5vw, -0.9rem);
     background-image: url("/visuel 2 gauche.webp");
     background-position: left top;
-    transform: translateY(calc(-0.5 * var(--page-scroll-y, 0px)));
   }
 
   .mobile-edge-side--right {
     right: clamp(-1.6rem, -5vw, -0.9rem);
     background-image: url("/visuel 2 droite.webp");
     background-position: right top;
-    transform: translateY(calc(0.5 * var(--page-scroll-y, 0px)));
   }
 
-
+  /* Android/desktop mobile : scroll-driven sur les bordures si supporté */
   @supports (animation-timeline: scroll()) {
     .mobile-edge-side--left {
       animation: edge-parallax-left linear both;
       animation-timeline: scroll(root);
-      transform: translateY(0);
+      transform: translate3d(0, calc(-0.5 * var(--page-scroll-y, 0px)), 0);
     }
 
     .mobile-edge-side--right {
       animation: edge-parallax-right linear both;
       animation-timeline: scroll(root);
-      transform: translateY(0);
+      transform: translate3d(0, calc(0.5 * var(--page-scroll-y, 0px)), 0);
     }
 
-    /* iOS : pas de scroll-driven sur les bordures */
+    /* iOS : scroll-driven désactivé, parallaxe JS uniquement */
     .ios .mobile-edge-side--left,
     .ios .mobile-edge-side--right {
       animation: none !important;
-      transform: none !important;
     }
   }
 }
