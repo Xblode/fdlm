@@ -7,6 +7,7 @@ import { MobileHeader } from "@/components/mobile-header";
 import { MobileHeroContent } from "@/components/mobile-hero-content";
 import { InstallAppPrompt } from "@/components/install-app-prompt";
 import { IosButtonTapFix } from "@/components/ios-button-tap-fix";
+import { StyleRecovery } from "@/components/style-recovery";
 import { ProgramProvider } from "@/components/program-provider";
 
 type MobileOnlyGateProps = {
@@ -26,6 +27,7 @@ function MobileAppShell({
         className={`mobile-app relative flex min-h-full flex-1 flex-col ${className}`}
       >
         <MobileViewportFix />
+        <StyleRecovery />
         <PageScrollController />
         <IosButtonTapFix />
         <MobileEdgeVisuals />

@@ -148,9 +148,28 @@ a {
     will-change: auto;
   }
 
-  /* Bordures latérales = images énormes + parallaxe → crash fréquent sur Safari */
+  /* Bordures latérales : version statique légère (sans parallaxe ni repeat-y) */
   .ios .mobile-edge-side {
-    display: none !important;
+    top: var(--mobile-header-height);
+    height: calc(var(--mobile-vh, 100svh) - var(--mobile-header-height));
+    width: clamp(3.5rem, 22vw, 5.5rem);
+    background-size: cover;
+    background-repeat: no-repeat;
+    will-change: auto;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .ios .mobile-edge-side--left {
+    left: clamp(-0.75rem, -2vw, 0);
+    background-image: url("/visuel 2 gauche.webp");
+    background-position: left bottom;
+  }
+
+  .ios .mobile-edge-side--right {
+    right: clamp(-0.75rem, -2vw, 0);
+    background-image: url("/visuel 2 droite.webp");
+    background-position: right bottom;
   }
 
   /* mix-blend-mode très coûteux sur iOS */
