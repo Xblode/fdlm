@@ -19,7 +19,6 @@ export function PageScrollController() {
     const driftEl = heroRoot.querySelector<HTMLElement>(".hero-visuel-drift");
     const isIOS = isIOSDevice();
 
-    // Safari iOS : les scroll-driven animations provoquent des crashs mémoire
     const useNativeScrollAnim =
       !isIOS && CSS.supports("animation-timeline: scroll()");
 
@@ -33,8 +32,15 @@ export function PageScrollController() {
     );
     visibilityObserver.observe(spacer);
 
-    const onScroll = () => {
-      const scrollY = window.scrollY;
+    let scrollRaf = 0;
+    let lastScrollY = -1;
+
+    const applyScroll = (scrollY: number) => {
+      if (scrollY === lastScrollY) return;
+      lastScrollY = scrollY;
+
+      // iOS : pas de parallaxe JS — scroll plus fluide, bordures statiques
+      if (isIOS) return;
 
       if (!useNativeScrollAnim) {
         root.style.setProperty("--page-scroll-y", `${scrollY}px`);
@@ -44,6 +50,14 @@ export function PageScrollController() {
           driftEl.style.transform = `scale(0.9) translate3d(${progress * HERO_VISUEL_MAX_X}%, ${progress * HERO_VISUEL_MAX_Y}%, 0)`;
         }
       }
+    };
+
+    const onScroll = () => {
+      if (scrollRaf) return;
+      scrollRaf = requestAnimationFrame(() => {
+        scrollRaf = 0;
+        applyScroll(window.scrollY);
+      });
     };
 
     let isSnapping = false;
@@ -80,7 +94,6 @@ export function PageScrollController() {
     };
 
     const onTouchEnd = () => {
-      // Snap désactivé sur iOS — provoque des conflits de scroll avec Safari
       if (isIOS || isSnapping) return;
 
       const scrollY = window.scrollY;
@@ -100,10 +113,11 @@ export function PageScrollController() {
 
     const onResize = () => {
       spacerHeight = spacer.offsetHeight || 1;
-      onScroll();
+      lastScrollY = -1;
+      applyScroll(window.scrollY);
     };
 
-    onScroll();
+    applyScroll(window.scrollY);
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
@@ -113,6 +127,7 @@ export function PageScrollController() {
     window.addEventListener("resize", onResize, { passive: true });
 
     return () => {
+      if (scrollRaf) cancelAnimationFrame(scrollRaf);
       visibilityObserver.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("touchstart", onTouchStart);

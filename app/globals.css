@@ -148,28 +148,30 @@ a {
     will-change: auto;
   }
 
-  /* Bordures latérales : version statique légère (sans parallaxe ni repeat-y) */
+  /* Bordures latérales iOS : proportions originales, statiques, sans parallaxe */
   .ios .mobile-edge-side {
-    top: var(--mobile-header-height);
-    height: calc(var(--mobile-vh, 100svh) - var(--mobile-header-height));
-    width: clamp(3.5rem, 22vw, 5.5rem);
-    background-size: cover;
+    top: 0;
+    height: var(--mobile-vh, 100svh);
+    width: calc(var(--mobile-vh, 100svh) * 3508 / 4961);
+    background-size: auto var(--mobile-vh, 100svh);
     background-repeat: no-repeat;
+    contain: paint;
     will-change: auto;
     transform: none !important;
     animation: none !important;
   }
 
   .ios .mobile-edge-side--left {
-    left: clamp(-0.75rem, -2vw, 0);
+    left: clamp(-1.6rem, -5vw, -0.9rem);
     background-image: url("/visuel 2 gauche.webp");
-    background-position: left bottom;
+    /* Ancrer côté intérieur pour montrer plus de façade */
+    background-position: right top;
   }
 
   .ios .mobile-edge-side--right {
-    right: clamp(-0.75rem, -2vw, 0);
+    right: clamp(-1.6rem, -5vw, -0.9rem);
     background-image: url("/visuel 2 droite.webp");
-    background-position: right bottom;
+    background-position: left top;
   }
 
   /* mix-blend-mode très coûteux sur iOS */
@@ -278,6 +280,12 @@ body {
       transform: translateY(0);
     }
 
+    /* iOS : pas de scroll-driven sur les bordures */
+    .ios .mobile-edge-side--left,
+    .ios .mobile-edge-side--right {
+      animation: none !important;
+      transform: none !important;
+    }
   }
 }
 
