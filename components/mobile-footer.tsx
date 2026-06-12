@@ -185,9 +185,24 @@ export function MobileFooter({
               <BehanceIcon className="size-5" />
             </a>
           </div>
-          <p className="font-display text-sm leading-none uppercase text-brand-yellow">
-            © 2026 {author}
-          </p>
+
+          <div className="flex w-full items-center justify-between gap-2">
+            <Link
+              href="/mentions-legales"
+              className="text-[0.6rem] tracking-wide text-brand-yellow/40 uppercase underline-offset-2 hover:text-brand-yellow/70 hover:underline"
+            >
+              Mentions légales
+            </Link>
+            <p className="shrink-0 font-display text-sm leading-none uppercase text-brand-yellow">
+              © 2026 {author}
+            </p>
+            <Link
+              href="/confidentialite"
+              className="text-[0.6rem] tracking-wide text-brand-yellow/40 uppercase underline-offset-2 hover:text-brand-yellow/70 hover:underline"
+            >
+              Confidentialité
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
