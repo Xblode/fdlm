@@ -15,9 +15,13 @@ export type DbVenue = {
   music_styles: string[];
   style_config: unknown;
   maps_url: string;
+  instagram_url: string | null;
+  website_url: string | null;
   card_image: string | null;
   card_image_focus_x: number;
   card_image_focus_y: number;
+  card_image_credit: string | null;
+  card_image_credit_url: string | null;
   published: boolean;
   created_at: string;
 };

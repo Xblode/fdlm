@@ -17,9 +17,13 @@ CREATE TABLE IF NOT EXISTS venues (
   music_styles TEXT[] NOT NULL DEFAULT '{}',
   style_config JSONB NOT NULL DEFAULT '[]',
   maps_url TEXT NOT NULL DEFAULT '',
+  instagram_url TEXT,
+  website_url TEXT,
   card_image TEXT,
   card_image_focus_x SMALLINT NOT NULL DEFAULT 50,
   card_image_focus_y SMALLINT NOT NULL DEFAULT 40,
+  card_image_credit TEXT,
+  card_image_credit_url TEXT,
   published BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -85,5 +89,11 @@ ON CONFLICT (id) DO NOTHING;
 
 ALTER TABLE venues ADD COLUMN IF NOT EXISTS style_config JSONB NOT NULL DEFAULT '[]';
 ALTER TABLE artists ADD COLUMN IF NOT EXISTS slot_end TEXT NOT NULL DEFAULT '';
+ALTER TABLE venues ADD COLUMN IF NOT EXISTS instagram_url TEXT;
+ALTER TABLE venues ADD COLUMN IF NOT EXISTS website_url TEXT;
 ALTER TABLE venues ADD COLUMN IF NOT EXISTS card_image_focus_x SMALLINT NOT NULL DEFAULT 50;
 ALTER TABLE venues ADD COLUMN IF NOT EXISTS card_image_focus_y SMALLINT NOT NULL DEFAULT 40;
+ALTER TABLE venues ADD COLUMN IF NOT EXISTS card_image_credit TEXT;
+ALTER TABLE venues ADD COLUMN IF NOT EXISTS card_image_credit_url TEXT;
+
+SELECT pg_notify('pgrst', 'reload schema');

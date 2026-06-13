@@ -13,9 +13,13 @@ export type Venue = {
   musicStyles: string[];
   styleConfig?: VenueStyleEntry[];
   mapsUrl: string;
+  instagramUrl?: string;
+  websiteUrl?: string;
   cardImage?: string;
   cardImageFocusX?: number;
   cardImageFocusY?: number;
+  cardImageCredit?: string;
+  cardImageCreditUrl?: string;
 };
 
 export type Artist = {

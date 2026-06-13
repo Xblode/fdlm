@@ -12,6 +12,18 @@ import { resolveVenueMapsUrl, resolveVenueMapsUrlForSave } from "@/lib/utils/map
 import { normalizeVenueImageFocus } from "@/lib/utils/venue-image-position";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
+function normalizeCardImageCredit(value?: string | null) {
+  return value?.trim() ?? "";
+}
+
+function normalizeCardImageCreditUrl(value?: string | null) {
+  return value?.trim() ?? "";
+}
+
+function normalizeExternalUrl(value?: string | null) {
+  return value?.trim() ?? "";
+}
+
 export function mapVenue(row: DbVenue): Venue {
   const styleConfig = parseStyleConfig(row.style_config);
   const musicStyles = getActiveStyleNames(styleConfig);
@@ -43,9 +55,14 @@ export function mapVenue(row: DbVenue): Venue {
       address,
       name,
     }),
+    instagramUrl: normalizeExternalUrl(row.instagram_url) || undefined,
+    websiteUrl: normalizeExternalUrl(row.website_url) || undefined,
     cardImage: row.card_image ?? undefined,
     cardImageFocusX: focus.x,
     cardImageFocusY: focus.y,
+    cardImageCredit: normalizeCardImageCredit(row.card_image_credit) || undefined,
+    cardImageCreditUrl:
+      normalizeCardImageCreditUrl(row.card_image_credit_url) || undefined,
   };
 }
 
@@ -74,9 +91,14 @@ export function mapVenueToDb(
       address,
       name,
     }),
+    instagram_url: normalizeExternalUrl(venue.instagramUrl) || null,
+    website_url: normalizeExternalUrl(venue.websiteUrl) || null,
     card_image: venue.cardImage ?? null,
     card_image_focus_x: focus.x,
     card_image_focus_y: focus.y,
+    card_image_credit: normalizeCardImageCredit(venue.cardImageCredit) || null,
+    card_image_credit_url:
+      normalizeCardImageCreditUrl(venue.cardImageCreditUrl) || null,
     published: venue.published ?? true,
   };
 }
@@ -189,12 +211,26 @@ export async function updateVenue(venueId: string, updates: Partial<Venue>) {
   }
   if (updates.hoursStart !== undefined) payload.hours_start = updates.hoursStart;
   if (updates.hoursEnd !== undefined) payload.hours_end = updates.hoursEnd;
+  if (updates.instagramUrl !== undefined) {
+    payload.instagram_url = normalizeExternalUrl(updates.instagramUrl) || null;
+  }
+  if (updates.websiteUrl !== undefined) {
+    payload.website_url = normalizeExternalUrl(updates.websiteUrl) || null;
+  }
   if (updates.musicStyles !== undefined) payload.music_styles = updates.musicStyles;
   if (updates.styleConfig !== undefined) {
     payload.style_config = updates.styleConfig;
     payload.music_styles = getActiveStyleNames(updates.styleConfig);
   }
   if (updates.cardImage !== undefined) payload.card_image = updates.cardImage ?? null;
+  if (updates.cardImageCredit !== undefined) {
+    payload.card_image_credit =
+      normalizeCardImageCredit(updates.cardImageCredit) || null;
+  }
+  if (updates.cardImageCreditUrl !== undefined) {
+    payload.card_image_credit_url =
+      normalizeCardImageCreditUrl(updates.cardImageCreditUrl) || null;
+  }
 
   const focus = normalizeVenueImageFocus(
     merged.cardImageFocusX,

@@ -54,7 +54,7 @@ export function FeaturedArtistCard({
         </div>
 
         <div className="mt-auto">
-          <p className="font-display line-clamp-2 text-3xl leading-tight break-words text-brand-yellow uppercase">
+          <p className="font-display line-clamp-2 text-3xl leading-none break-words text-brand-yellow uppercase">
             {artist.name}
           </p>
           <p className="mt-0.5 line-clamp-1 text-[0.65rem] leading-none text-brand-yellow/90 uppercase">

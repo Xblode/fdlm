@@ -60,9 +60,13 @@ export async function POST(request: Request) {
       hoursEnd: body.hoursEnd ?? "02H00",
       musicStyles: [],
       mapsUrl: body.mapsUrl ?? "",
+      instagramUrl: body.instagramUrl,
+      websiteUrl: body.websiteUrl,
       cardImage: body.cardImage,
       cardImageFocusX: body.cardImageFocusX,
       cardImageFocusY: body.cardImageFocusY,
+      cardImageCredit: body.cardImageCredit,
+      cardImageCreditUrl: body.cardImageCreditUrl,
       published: body.published ?? false,
     });
 

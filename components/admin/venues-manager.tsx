@@ -46,9 +46,13 @@ const emptyVenue = (cityId: string): VenueDraft => ({
   musicStyles: [],
   styleConfig: [],
   mapsUrl: "",
+  instagramUrl: "",
+  websiteUrl: "",
   cardImage: "",
   cardImageFocusX: DEFAULT_VENUE_IMAGE_FOCUS.x,
   cardImageFocusY: DEFAULT_VENUE_IMAGE_FOCUS.y,
+  cardImageCredit: "",
+  cardImageCreditUrl: "",
 });
 
 export function VenuesManager({ initialVenues, artists }: VenuesManagerProps) {
@@ -144,9 +148,13 @@ export function VenuesManager({ initialVenues, artists }: VenuesManagerProps) {
       hoursStart: draft.hoursStart,
       hoursEnd: draft.hoursEnd,
       mapsUrl: draft.mapsUrl,
+      instagramUrl: draft.instagramUrl?.trim() ?? "",
+      websiteUrl: draft.websiteUrl?.trim() ?? "",
       cardImage: draft.cardImage,
       cardImageFocusX: focus.x,
       cardImageFocusY: focus.y,
+      cardImageCredit: draft.cardImageCredit?.trim() ?? "",
+      cardImageCreditUrl: draft.cardImageCreditUrl?.trim() ?? "",
     };
 
     if (editingId) {
@@ -375,6 +383,30 @@ export function VenuesManager({ initialVenues, artists }: VenuesManagerProps) {
               placeholder="Lien Google Maps (optionnel)"
               className={fieldClassName}
             />
+            <input
+              type="url"
+              value={draft.instagramUrl ?? ""}
+              onChange={(event) =>
+                setDraft((current) => ({
+                  ...current,
+                  instagramUrl: event.target.value,
+                }))
+              }
+              placeholder="Instagram du lieu (optionnel)"
+              className={`${fieldClassName} normal-case`}
+            />
+            <input
+              type="url"
+              value={draft.websiteUrl ?? ""}
+              onChange={(event) =>
+                setDraft((current) => ({
+                  ...current,
+                  websiteUrl: event.target.value,
+                }))
+              }
+              placeholder="Site web du lieu (optionnel)"
+              className={`${fieldClassName} normal-case`}
+            />
             <ImageUpload
               value={draft.cardImage}
               onChange={(url) =>
@@ -394,6 +426,31 @@ export function VenuesManager({ initialVenues, artists }: VenuesManagerProps) {
                   cardImageFocusY: y,
                 }));
               }}
+            />
+
+            <input
+              value={draft.cardImageCredit ?? ""}
+              onChange={(event) =>
+                setDraft((current) => ({
+                  ...current,
+                  cardImageCredit: event.target.value,
+                }))
+              }
+              placeholder="Copyright photo (ex. Mickaël Liblin)"
+              className={`${fieldClassName} normal-case`}
+            />
+
+            <input
+              type="url"
+              value={draft.cardImageCreditUrl ?? ""}
+              onChange={(event) =>
+                setDraft((current) => ({
+                  ...current,
+                  cardImageCreditUrl: event.target.value,
+                }))
+              }
+              placeholder="Lien crédit photo (Instagram ou site)"
+              className={`${fieldClassName} normal-case`}
             />
 
             {editingId ? (
