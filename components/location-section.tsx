@@ -2,15 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSiteData } from "@/components/site-data-provider";
-import { FeaturedCarousel } from "@/components/featured-carousel";
+import { FeaturedCarousel, FEATURED_ARTIST_COUNT } from "@/components/featured-carousel";
 import { ChevronIcon } from "@/components/chevron-icon";
 import { MusicStyleFilters } from "@/components/music-style-filters";
 import { SearchBar } from "@/components/search-bar";
 import { VenueCard } from "@/components/venue-card";
 import { musicStylesMatch } from "@/lib/utils/music-style";
-import { shuffleArray } from "@/lib/utils/shuffle";
+import { compareDisplayTimes } from "@/lib/utils/time-filter";
+import { hashStringToSeed, shuffleArray } from "@/lib/utils/shuffle";
 
 const VENUES_PER_PAGE = 4;
 
@@ -30,7 +31,7 @@ function VenuePagination({
   return (
     <nav
       aria-label="Pagination des lieux"
-      className="mt-6 flex items-center justify-between gap-3"
+      className="relative z-20 mt-6 flex items-center justify-between gap-3"
     >
       <button
         type="button"
@@ -78,8 +79,7 @@ export function LocationSection({
   const { venues, artists, musicFilterStyles, eventInfo } = useSiteData();
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [artistShuffleSeed, setArtistShuffleSeed] = useState(() => Date.now());
-  const previousStyleRef = useRef<string | null>(null);
+  const [randomShuffleSeed, setRandomShuffleSeed] = useState<number | null>(null);
   const filterKey = `${selectedCityId}|${selectedStyle ?? ""}|${searchQuery}`;
   const [pageState, setPageState] = useState({ filterKey, page: 1 });
 
@@ -151,31 +151,40 @@ export function LocationSection({
     });
   }, [selectedCityId, selectedStyle, searchQuery, venues, artists, eventInfo]);
 
-  useEffect(() => {
-    if (selectedStyle === null && previousStyleRef.current !== null) {
-      setArtistShuffleSeed(Date.now());
-    }
+  const shuffleScopeKey = useMemo(
+    () =>
+      `${selectedCityId}|${selectedStyle ?? ""}|${searchQuery}|${filteredArtists
+        .map((artist) => artist.id)
+        .join(",")}`,
+    [filteredArtists, searchQuery, selectedCityId, selectedStyle],
+  );
 
-    previousStyleRef.current = selectedStyle;
-  }, [selectedStyle]);
+  const deterministicShuffleSeed = useMemo(
+    () => hashStringToSeed(shuffleScopeKey),
+    [shuffleScopeKey],
+  );
 
   useEffect(() => {
-    if (selectedStyle === null) {
-      setArtistShuffleSeed(Date.now());
-    }
-  }, [selectedCityId, selectedStyle]);
+    setRandomShuffleSeed(null);
+  }, [shuffleScopeKey]);
 
   const isAllStylesView = selectedStyle === null;
 
   const carouselArtists = useMemo(() => {
     if (!isAllStylesView) {
       return [...filteredArtists].sort((a, b) =>
-        a.slot.localeCompare(b.slot, "fr", { numeric: true }),
+        compareDisplayTimes(a.slot, b.slot),
       );
     }
 
-    return shuffleArray(filteredArtists, artistShuffleSeed);
-  }, [filteredArtists, isAllStylesView, artistShuffleSeed]);
+    const shuffleSeed = randomShuffleSeed ?? deterministicShuffleSeed;
+    return shuffleArray(filteredArtists, shuffleSeed);
+  }, [
+    deterministicShuffleSeed,
+    filteredArtists,
+    isAllStylesView,
+    randomShuffleSeed,
+  ]);
 
   function goToPage(page: number) {
     setPageState({ filterKey, page });
@@ -190,7 +199,9 @@ export function LocationSection({
   return (
     <section
       id="location-section"
-      className="scroll-mt-[var(--mobile-header-height)] rounded-tl-3xl bg-brand-yellow px-4 pt-6 pb-10 text-brand-black"
+      className={`scroll-mt-[var(--mobile-header-height)] rounded-tl-3xl bg-brand-yellow px-4 pt-6 text-brand-black ${
+        totalPages > 1 ? "pb-20" : "pb-10"
+      }`}
     >
       <div className="location-sticky-toolbar sticky top-[var(--mobile-header-height)] z-[15] -mx-4 bg-brand-yellow px-4 pb-2">
         <div
@@ -210,24 +221,34 @@ export function LocationSection({
       <div className="mt-2">
         <FeaturedCarousel
           artists={carouselArtists}
-          showShuffleButton={isAllStylesView && filteredArtists.length > 6}
-          onShuffle={() => setArtistShuffleSeed(Date.now())}
+          showShuffleButton={isAllStylesView && filteredArtists.length > FEATURED_ARTIST_COUNT}
+          onShuffle={() => setRandomShuffleSeed(Date.now())}
+          viewAllHref={`/artistes?ville=${selectedCityId}`}
         />
       </div>
 
       <div
         id="location-venues-list"
-        className="mt-2 mb-5 flex scroll-mt-[calc(var(--mobile-header-height)+7rem)] items-center gap-3"
+        className="mt-2 mb-5 flex scroll-mt-[calc(var(--mobile-header-height)+7rem)] items-center justify-between gap-3"
       >
-        <Image
-          src="/1x/Fichier 4.webp"
-          alt=""
-          width={49}
-          height={49}
-          className="h-5 w-auto shrink-0 object-contain"
-          aria-hidden
-        />
-        <h2 className="font-display text-3xl leading-none uppercase">Lieux</h2>
+        <div className="flex min-w-0 items-center gap-3">
+          <Image
+            src="/1x/Fichier 4.webp"
+            alt=""
+            width={49}
+            height={49}
+            className="h-5 w-auto shrink-0 object-contain"
+            aria-hidden
+          />
+          <h2 className="font-display text-3xl leading-none uppercase">Lieux</h2>
+        </div>
+
+        <Link
+          href={`/lieux?ville=${selectedCityId}`}
+          className="shrink-0 rounded-full border-2 border-brand-black bg-white px-3 py-1.5 font-display text-sm uppercase leading-none text-brand-black shadow-[2px_2px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
+        >
+          Tout voir
+        </Link>
       </div>
 
       {filteredVenues.length > 0 ? (

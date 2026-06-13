@@ -38,6 +38,9 @@ function AdminShellContent({ children }: AdminShellProps) {
   const [pendingCountsByCityId, setPendingCountsByCityId] = useState<
     Record<string, number>
   >({});
+  const [pwaStats, setPwaStats] = useState<{ uniqueUsers: number } | null>(
+    null,
+  );
 
   const refreshPendingCounts = useCallback(async () => {
     try {
@@ -55,9 +58,26 @@ function AdminShellContent({ children }: AdminShellProps) {
     }
   }, []);
 
+  const refreshPwaStats = useCallback(async () => {
+    try {
+      const response = await fetch("/api/admin/pwa-standalone");
+      const data = (await response.json()) as {
+        ok?: boolean;
+        data?: { uniqueUsers: number };
+      };
+
+      if (!response.ok || !data.ok || !data.data) return;
+
+      setPwaStats(data.data);
+    } catch {
+      // Ignore stats refresh errors in the shell UI.
+    }
+  }, []);
+
   useEffect(() => {
     void refreshPendingCounts();
-  }, [pathname, refreshPendingCounts]);
+    void refreshPwaStats();
+  }, [pathname, refreshPendingCounts, refreshPwaStats]);
 
   useEffect(() => {
     function handleSubmissionsChanged() {
@@ -149,6 +169,20 @@ function AdminShellContent({ children }: AdminShellProps) {
         </nav>
 
         <div className="min-w-0 flex-1">
+          {pwaStats ? (
+            <div className="mb-5 rounded-2xl border-2 border-brand-black bg-white px-4 py-3 shadow-[3px_3px_0_0_#0a0a0a]">
+              <p className="font-display text-sm uppercase text-brand-black/70">
+                Utilisation PWA
+              </p>
+              <p className="mt-1 font-display text-2xl leading-none uppercase">
+                {pwaStats.uniqueUsers} utilisateur
+                {pwaStats.uniqueUsers > 1 ? "s" : ""}
+              </p>
+              <p className="mt-1 text-sm text-brand-black/70">
+                Première ouverture en mode application
+              </p>
+            </div>
+          ) : null}
           <div className="mb-5">
             <p className="mb-2 font-display text-sm uppercase text-brand-black/70">
               Ville

@@ -49,3 +49,10 @@ export type DbProgramEntry = {
   venue_name: string;
   created_at: string;
 };
+
+export type DbPwaStandaloneUser = {
+  user_uuid: string;
+  first_seen_at: string;
+  last_seen_at: string;
+  open_count: number;
+};

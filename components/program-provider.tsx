@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { getOrCreateUserUuid } from "@/lib/anonymous-user";
 
 export type ProgramEntry = {
   id: string;
@@ -30,17 +31,6 @@ type ProgramContextValue = {
 
 const ProgramContext = createContext<ProgramContextValue | null>(null);
 
-const USER_UUID_STORAGE_KEY = "fdlm-user-uuid";
-
-function getOrCreateUserUuid() {
-  const existing = localStorage.getItem(USER_UUID_STORAGE_KEY);
-  if (existing) return existing;
-
-  const uuid = crypto.randomUUID();
-  localStorage.setItem(USER_UUID_STORAGE_KEY, uuid);
-  return uuid;
-}
-
 export function ProgramProvider({ children }: { children: ReactNode }) {
   const [entries, setEntries] = useState<ProgramEntry[]>([]);
   const [userUuid, setUserUuid] = useState<string | null>(null);
@@ -48,6 +38,8 @@ export function ProgramProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const uuid = getOrCreateUserUuid();
+    if (!uuid) return;
+
     setUserUuid(uuid);
 
     fetch(`/api/program?uuid=${encodeURIComponent(uuid)}`)

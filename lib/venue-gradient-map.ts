@@ -39,10 +39,17 @@ export function buildInvertedGradientMapStops(
   return luminanceStops.sort((a, b) => a.offset - b.offset);
 }
 
+export const venueGradientPalette = {
+  yellow: "#ffd200",
+  red: "#ff231f",
+  dark: "#222222",
+  cyan: "#0088bb",
+} as const;
+
 export const venueCardGradientMap = buildInvertedGradientMapStops([
-  { position: 0.07, color: "#ffd200" },
-  { position: 0.47, color: "#ff231f" },
-  { position: 0.8, color: "#222222" },
+  { position: 0.07, color: venueGradientPalette.yellow },
+  { position: 0.47, color: venueGradientPalette.red },
+  { position: 0.8, color: venueGradientPalette.dark },
 ]);
 
 export const VENUE_GRADIENT_FILTER_ID = "venue-gradient-map";

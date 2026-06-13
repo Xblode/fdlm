@@ -61,6 +61,16 @@ CREATE INDEX IF NOT EXISTS idx_artists_published ON artists(published);
 CREATE INDEX IF NOT EXISTS idx_event_submissions_status ON event_submissions(status);
 CREATE INDEX IF NOT EXISTS idx_user_programs_user_uuid ON user_programs(user_uuid);
 
+CREATE TABLE IF NOT EXISTS pwa_standalone_users (
+  user_uuid TEXT PRIMARY KEY,
+  first_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  open_count INTEGER NOT NULL DEFAULT 1 CHECK (open_count > 0)
+);
+
+CREATE INDEX IF NOT EXISTS idx_pwa_standalone_users_last_seen
+  ON pwa_standalone_users(last_seen_at DESC);
+
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
   'venue-images',

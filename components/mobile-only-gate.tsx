@@ -7,6 +7,7 @@ import { PageScrollController } from "@/components/page-scroll-controller";
 import { MobileHeader } from "@/components/mobile-header";
 import { MobileHeroContent } from "@/components/mobile-hero-content";
 import { InstallAppPrompt } from "@/components/install-app-prompt";
+import { PwaStandaloneTracker } from "@/components/pwa-standalone-tracker";
 import { IosButtonTapFix } from "@/components/ios-button-tap-fix";
 import { StyleRecovery } from "@/components/style-recovery";
 import { ProgramProvider } from "@/components/program-provider";
@@ -45,6 +46,7 @@ function MobileAppShell({
           <StyleRecovery />
           <PageScrollController />
           <IosButtonTapFix />
+          <PwaStandaloneTracker />
           <MobileEdgeVisuals />
           <MobileHeader />
           <MobileHeroContent />

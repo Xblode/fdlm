@@ -142,7 +142,8 @@ a {
 }
 
 /* Approximation légère du gradient map sur mobile */
-.venue-card-gradient-overlay {
+.venue-card-gradient-overlay,
+.venue-placeholder-gradient {
   background: linear-gradient(
     135deg,
     rgba(255, 210, 0, 0.45) 0%,
@@ -150,6 +151,40 @@ a {
     rgba(34, 34, 34, 0.55) 100%
   );
   mix-blend-mode: multiply;
+}
+
+.venue-placeholder-gradient {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+}
+
+/* Variantes légères — palette jaune / rouge / anthracite / cyan */
+.venue-placeholder-gradient--0 {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 210, 0, 0.45) 0%,
+    rgba(255, 35, 31, 0.35) 45%,
+    rgba(34, 34, 34, 0.55) 100%
+  );
+}
+
+.venue-placeholder-gradient--1 {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 210, 0, 0.38) 0%,
+    rgba(255, 35, 31, 0.28) 52%,
+    rgba(34, 34, 34, 0.42) 100%
+  );
+}
+
+.venue-placeholder-gradient--2 {
+  background: linear-gradient(
+    120deg,
+    rgba(0, 136, 187, 0.22) 0%,
+    rgba(255, 210, 0, 0.34) 46%,
+    rgba(255, 35, 31, 0.3) 100%
+  );
 }
 
 /* iOS Safari : mode safe — évite les crashs mémoire du navigateur */
@@ -197,16 +232,19 @@ a {
     transform-origin: 50% 0;
   }
 
-  /* mix-blend-mode très coûteux sur iOS */
-  .ios .venue-card-gradient-overlay {
-    mix-blend-mode: normal;
-    opacity: 0.55;
-  }
+  /* mix-blend-mode très coûteux sur iOS Safari */
+  @supports (-webkit-touch-callout: none) {
+    .venue-card-gradient-overlay,
+    .venue-placeholder-gradient {
+      mix-blend-mode: normal;
+      opacity: 0.55;
+    }
 
-  /* Fond fixe simplifié : couleur unie, pas d'image lourde en couche fixed */
-  .ios html::before {
-    background-image: none;
-    background-color: #0088bb;
+    /* Fond fixe simplifié : couleur unie, pas d'image lourde en couche fixed */
+    html::before {
+      background-image: none;
+      background-color: #0088bb;
+    }
   }
 }
 

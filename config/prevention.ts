@@ -7,11 +7,17 @@ export type PreventionPoster = {
 export const rdrContent = {
   title: "Réduction des risques",
   description:
-    "On a créé une série d'affiches de prévention pour sensibiliser ton public. Commande-les gratuitement et affiche-les dans ton lieu pour une fête plus safe.",
-  hint: "Touche les cartes pour les feuilleter",
-  orderLabel: "Demander des affiches",
-  orderHref:
-    "mailto:contact@boomkoeur.fr?subject=Commande%20d'affiches%20de%20pr%C3%A9vention%20%E2%80%94%20FDLM%202026&body=Bonjour%2C%0A%0AJe%20souhaite%20commander%20les%20affiches%20de%20pr%C3%A9vention%20pour%20mon%20lieu.%0A%0ANom%20du%20lieu%20%3A%20%0AAdresse%20%3A%20%0AAffiches%20souhait%C3%A9es%20%3A%20%0A%0AMerci%20%21",
+    "On a créé une série d'affiches de prévention pour sensibiliser ton public. Télécharge les fichiers d'impression et nos conseils pour les afficher dans ton lieu — c'est gratuit et ouvert à toutes et tous.",
+  resourcesLabel: "Fichiers & conseils",
+  printBundleFile: "/affiche/affiches-prevention-fdlm-2026.zip",
+  printBundleDownloadName: "affiches-prevention-fdlm-2026.zip",
+  printBundleLabel: "Télécharger toutes les affiches",
+  printingTips: [
+    "Imprime en A4 ou A3 sur papier mat ou satin, 170 g minimum — ça convient aussi au petit format A6, type carte postale.",
+    "Pour des couleurs fidèles, passe par une imprimerie professionnelle.",
+    "Laisse bien sécher les affiches avant de les coller.",
+    "Varie les messages dans ton lieu pour toucher plus de monde.",
+  ],
 } as const;
 
 function affiche(filename: string) {

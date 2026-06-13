@@ -15,8 +15,12 @@ function VenueDetail({ venue, artistCount }: VenueDetailSectionProps) {
 
   return (
     <>
-      <div className="relative overflow-hidden rounded-3xl shadow-[6px_6px_0_0_#0a0a0a]">
-        <VenueCardMedia imageSrc={venue.cardImage} rounded="all" />
+      <div className="relative overflow-hidden rounded-3xl border-2 border-brand-black shadow-[6px_6px_0_0_#0a0a0a]">
+        <VenueCardMedia
+          venueId={venue.id}
+          imageSrc={venue.cardImage}
+          rounded="all"
+        />
         <div className="relative z-10 flex min-h-[220px] flex-col justify-end gap-3 p-6">
           <p className="font-display w-fit rounded-full bg-brand-black px-3 py-1 text-xs tracking-[0.2em] text-brand-yellow uppercase">
             {venue.venueType}

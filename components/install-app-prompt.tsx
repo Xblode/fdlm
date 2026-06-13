@@ -4,6 +4,7 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { BottomSheetPortal } from "@/components/bottom-sheet-portal";
 import { useBodyScrollLock } from "@/components/use-body-scroll-lock";
 import { useModalTransition } from "@/components/use-modal-transition";
+import { isIOSDevice, isStandaloneMode } from "@/lib/device";
 
 const VISIT_COUNT_KEY = "fdlm-visit-count";
 const DISMISS_KEY = "fdlm-install-prompt-dismissed";
@@ -29,29 +30,12 @@ function CloseIcon() {
   );
 }
 
-function isStandaloneMode() {
-  if (typeof window === "undefined") return false;
-
-  return (
-    window.matchMedia("(display-mode: standalone)").matches ||
-    ("standalone" in window.navigator &&
-      (window.navigator as Navigator & { standalone?: boolean }).standalone ===
-        true)
-  );
-}
-
-function isIosDevice() {
-  if (typeof navigator === "undefined") return false;
-
-  return /iphone|ipad|ipod/i.test(navigator.userAgent);
-}
-
 export function InstallAppPrompt() {
   const [isOpen, setIsOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const titleId = useId();
-  const isIos = isIosDevice();
+  const isIos = isIOSDevice();
   const { isMounted, isVisible } = useModalTransition(isOpen);
 
   const dismiss = useCallback(() => {

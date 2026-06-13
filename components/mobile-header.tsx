@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ProgramPanel } from "@/components/program-panel";
 
@@ -9,8 +10,8 @@ const LOGO_HEIGHT = 784;
 const MENU_WIDTH = 83;
 const MENU_HEIGHT = 49;
 
-const EXPLORE_WIDTH = 47;
-const EXPLORE_HEIGHT = 46;
+const SEARCH_ICON_WIDTH = 46;
+const SEARCH_ICON_HEIGHT = 46;
 
 function scrollToLocationSearch() {
   const search = document.getElementById("location-search");
@@ -104,7 +105,9 @@ export function MobileHeader() {
         />
       </button>
 
-      <div
+      <Link
+        href="/"
+        aria-label="Retour à l'accueil"
         className={`justify-self-center transition-transform duration-300 ease-out ${
           isCompact ? "scale-95" : "scale-100"
         }`}
@@ -118,7 +121,7 @@ export function MobileHeader() {
           sizes="(max-width: 767px) 40vw"
           className="h-9 w-auto max-w-[160px] object-contain brightness-0 mix-blend-screen"
         />
-      </div>
+      </Link>
 
       <button
         type="button"
@@ -129,10 +132,10 @@ export function MobileHeader() {
         }`}
       >
         <Image
-          src="/1x/Fichier 3.webp"
+          src="/1x/Fichier 9.png"
           alt=""
-          width={EXPLORE_WIDTH}
-          height={EXPLORE_HEIGHT}
+          width={SEARCH_ICON_WIDTH}
+          height={SEARCH_ICON_HEIGHT}
           className="h-7 w-auto object-contain"
           aria-hidden
         />

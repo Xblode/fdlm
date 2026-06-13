@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import type { Artist } from "@/lib/data/types";
 import { useSiteData } from "@/components/site-data-provider";
 import { useProgram } from "@/components/program-provider";
@@ -10,11 +11,12 @@ type FeaturedCarouselProps = {
   artists: Artist[];
   showShuffleButton?: boolean;
   onShuffle?: () => void;
+  viewAllHref?: string;
 };
 
-const FEATURED_ARTIST_COUNT = 6;
+export const FEATURED_ARTIST_COUNT = 4;
 
-function FeaturedArtistCard({
+export function FeaturedArtistCard({
   artist,
   venueName,
 }: {
@@ -43,16 +45,16 @@ function FeaturedArtistCard({
     <article className="relative aspect-square w-full overflow-hidden rounded-2xl border-2 border-brand-black bg-[url('/fond-0.webp')] bg-cover bg-center text-left shadow-[4px_4px_0_0_#0a0a0a]">
       <div className="flex h-full flex-col p-3">
         <div className="flex items-start justify-between gap-2">
-          <span className="font-display w-fit rounded-full bg-brand-black px-2 py-0.5 text-[0.6rem] tracking-[0.12em] text-brand-yellow uppercase">
+          <span className="font-display w-fit rounded-full bg-brand-black px-2.5 py-1 text-xs tracking-[0.1em] text-brand-yellow uppercase">
             {artist.genre}
           </span>
-          <span className="shrink-0 font-display text-lg leading-none text-brand-yellow uppercase">
+          <span className="shrink-0 font-display text-2xl leading-none text-brand-yellow uppercase">
             {formatArtistSlot(artist)}
           </span>
         </div>
 
         <div className="mt-auto">
-          <p className="font-display line-clamp-2 text-2xl leading-tight break-words text-brand-yellow uppercase">
+          <p className="font-display line-clamp-2 text-3xl leading-tight break-words text-brand-yellow uppercase">
             {artist.name}
           </p>
           <p className="mt-0.5 line-clamp-1 text-[0.65rem] leading-none text-brand-yellow/90 uppercase">
@@ -67,7 +69,7 @@ function FeaturedArtistCard({
                 ? `Retirer ${artist.name} du programme`
                 : `Ajouter ${artist.name} au programme`
             }
-            className={`mt-2 w-full rounded-full border-2 border-brand-black px-3 py-2 text-center font-display text-sm leading-none tracking-wide uppercase transition-transform active:scale-[0.98] ${
+            className={`mt-2 w-full rounded-full border-2 border-brand-black px-3 py-2.5 text-center font-display text-xl leading-none tracking-wide uppercase transition-transform active:scale-[0.98] ${
               alreadyAdded
                 ? "bg-brand-black/20 text-brand-yellow/70 shadow-none"
                 : "bg-brand-yellow text-brand-black shadow-[2px_2px_0_0_#0a0a0a]"
@@ -85,6 +87,7 @@ export function FeaturedCarousel({
   artists,
   showShuffleButton = false,
   onShuffle,
+  viewAllHref,
 }: FeaturedCarouselProps) {
   const { venues } = useSiteData();
   const featuredArtists = artists.slice(0, FEATURED_ARTIST_COUNT);
@@ -97,22 +100,33 @@ export function FeaturedCarousel({
 
   return (
     <div className="mb-10">
-      <div className="mb-2 flex items-center gap-3">
-        <Image
-          src="/1x/Fichier 2.webp"
-          alt=""
-          width={44}
-          height={49}
-          className="h-5 w-auto shrink-0 object-contain"
-          aria-hidden
-        />
-        <h2 className="font-display text-3xl leading-none uppercase">
-          Artistes
-        </h2>
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <Image
+            src="/1x/Fichier 2.webp"
+            alt=""
+            width={44}
+            height={49}
+            className="h-5 w-auto shrink-0 object-contain"
+            aria-hidden
+          />
+          <h2 className="font-display text-3xl leading-none uppercase">
+            Artistes
+          </h2>
+        </div>
+
+        {viewAllHref ? (
+          <Link
+            href={viewAllHref}
+            className="shrink-0 rounded-full border-2 border-brand-black bg-white px-3 py-1.5 font-display text-sm uppercase leading-none text-brand-black shadow-[2px_2px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
+          >
+            Tout voir
+          </Link>
+        ) : null}
       </div>
 
       {featuredArtists.length > 0 ? (
-        <div className="grid grid-cols-3 gap-3 py-3">
+        <div className="grid grid-cols-2 gap-3 py-3">
           {featuredArtists.map((artist) => (
             <FeaturedArtistCard
               key={artist.id}
@@ -131,7 +145,7 @@ export function FeaturedCarousel({
         <button
           type="button"
           onClick={onShuffle}
-          className="mt-3 w-full rounded-full border-2 border-brand-black bg-white px-4 py-2 font-display text-sm uppercase text-brand-black shadow-[3px_3px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
+          className="mt-3 w-full rounded-full border-2 border-brand-black bg-white px-4 py-2.5 font-display text-xl uppercase leading-none text-brand-black shadow-[3px_3px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
         >
           Découvrir d&apos;autres ?
         </button>
