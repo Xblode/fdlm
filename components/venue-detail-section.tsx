@@ -19,6 +19,8 @@ function VenueDetail({ venue, artistCount }: VenueDetailSectionProps) {
         <VenueCardMedia
           venueId={venue.id}
           imageSrc={venue.cardImage}
+          focusX={venue.cardImageFocusX}
+          focusY={venue.cardImageFocusY}
           rounded="all"
         />
         <div className="relative z-10 flex min-h-[220px] flex-col justify-end gap-3 p-6">

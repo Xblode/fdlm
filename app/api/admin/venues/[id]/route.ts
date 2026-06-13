@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { ensureAdmin } from "@/lib/auth/ensure-admin";
+import { revalidateVenuePages } from "@/lib/data/revalidate-site";
 import { deleteVenue, getVenueById, updateVenue } from "@/lib/data/venues";
 import type { Venue } from "@/lib/data/types";
+import type { VenueStyleEntry } from "@/lib/data/venue-styles";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
+};
+
+type VenueUpdateBody = Partial<Venue> & {
+  styleConfig?: VenueStyleEntry[];
 };
 
 export async function PATCH(request: Request, context: RouteContext) {
@@ -26,7 +32,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     );
   }
 
-  let body: Partial<Venue>;
+  let body: VenueUpdateBody;
 
   try {
     body = await request.json();
@@ -41,13 +47,15 @@ export async function PATCH(request: Request, context: RouteContext) {
 
   try {
     const venue = await updateVenue(id, body);
+    revalidateVenuePages(id);
     return NextResponse.json({ ok: true, data: venue });
   } catch (error) {
     console.error("Update venue failed:", error);
-    return NextResponse.json(
-      { ok: false, message: "Impossible de mettre à jour le lieu." },
-      { status: 500 },
-    );
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Impossible de mettre à jour le lieu.";
+    return NextResponse.json({ ok: false, message }, { status: 500 });
   }
 }
 
@@ -64,6 +72,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
 
   try {
     await deleteVenue(id);
+    revalidateVenuePages(id);
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Delete venue failed:", error);

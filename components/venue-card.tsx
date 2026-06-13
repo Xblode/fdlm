@@ -5,24 +5,33 @@ import { useRef } from "react";
 import type { Venue } from "@/lib/data/types";
 import { ChevronIcon } from "@/components/chevron-icon";
 import { VenuePlaceholderGradient } from "@/components/venue-placeholder-gradient";
-import { GradientMapImage } from "@/components/gradient-map-image";
+import { VenueCardImage } from "@/components/venue-card-image";
+import { DEFAULT_VENUE_IMAGE_FOCUS } from "@/lib/utils/venue-image-position";
 
 const SCROLL_THRESHOLD_PX = 8;
 
 function VenueImageSeparator({
   venueId,
   imageSrc,
+  focusX = DEFAULT_VENUE_IMAGE_FOCUS.x,
+  focusY = DEFAULT_VENUE_IMAGE_FOCUS.y,
 }: {
   venueId: string;
   imageSrc?: string;
+  focusX?: number;
+  focusY?: number;
 }) {
   return (
     <div
-      className="relative w-full flex-1 overflow-hidden border-y-2 border-brand-black"
+      className="relative size-full overflow-hidden border-b-2 border-brand-black"
       aria-hidden="true"
     >
       {imageSrc ? (
-        <GradientMapImage src={imageSrc} alt="" />
+        <VenueCardImage
+          src={imageSrc}
+          focusX={focusX}
+          focusY={focusY}
+        />
       ) : (
         <VenuePlaceholderGradient venueId={venueId} className="absolute inset-0" />
       )}
@@ -38,7 +47,7 @@ function VenueHoursBadge({
   hoursEnd: string;
 }) {
   return (
-    <div className="shrink-0 rounded-xl border-2 border-brand-black bg-brand-yellow px-2 py-1 font-display text-lg leading-none tabular-nums text-brand-black uppercase shadow-[2px_2px_0_0_#0a0a0a]">
+    <div className="absolute top-5 right-5 z-10 shrink-0 rounded-xl border-2 border-brand-black bg-brand-yellow px-2 py-1 font-display text-lg leading-none tabular-nums text-brand-black uppercase shadow-[2px_2px_0_0_#0a0a0a]">
       {hoursStart} | {hoursEnd}
     </div>
   );
@@ -73,18 +82,23 @@ export function VenueCard({ venue }: VenueCardProps) {
       }}
       className="flex h-[280px] w-full flex-col overflow-hidden rounded-3xl border-2 border-brand-black bg-white text-left shadow-[4px_4px_0_0_#0a0a0a] transition-transform active:scale-[0.98]"
     >
-      <div className="flex shrink-0 items-start justify-between gap-3 p-5">
-        <h3 className="min-w-0 flex-1 font-display text-3xl leading-none text-brand-black uppercase">
-          {venue.name}
-        </h3>
+      <div className="relative min-h-0 flex-1">
+        <VenueImageSeparator
+          venueId={venue.id}
+          imageSrc={venue.cardImage}
+          focusX={venue.cardImageFocusX}
+          focusY={venue.cardImageFocusY}
+        />
 
         <VenueHoursBadge
           hoursStart={venue.hoursStart}
           hoursEnd={venue.hoursEnd}
         />
-      </div>
 
-      <VenueImageSeparator venueId={venue.id} imageSrc={venue.cardImage} />
+        <h3 className="absolute inset-x-0 bottom-0 z-10 p-5 font-display text-3xl leading-none text-brand-yellow uppercase drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
+          {venue.name}
+        </h3>
+      </div>
 
       <div className="flex shrink-0 items-center justify-between gap-4 px-5 pt-4 pb-5">
         <div className="hide-scrollbar flex min-w-0 gap-2 overflow-x-auto pb-1 pr-1">

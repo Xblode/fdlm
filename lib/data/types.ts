@@ -14,6 +14,8 @@ export type Venue = {
   styleConfig?: VenueStyleEntry[];
   mapsUrl: string;
   cardImage?: string;
+  cardImageFocusX?: number;
+  cardImageFocusY?: number;
 };
 
 export type Artist = {

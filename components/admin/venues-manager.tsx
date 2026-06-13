@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo, useRef, useState } from "react";
 import { getCityById } from "@/config/cities";
 import type { Artist, Venue } from "@/lib/data/types";
 import { initStyleConfig } from "@/lib/data/venue-styles";
@@ -11,7 +12,9 @@ import {
   adminFieldClassName,
 } from "@/components/admin/admin-form-modal";
 import { ImageUpload } from "@/components/admin/image-upload";
+import { VenueImagePositionEditor } from "@/components/admin/venue-image-position-editor";
 import { VenueStyleEditor } from "@/components/admin/venue-style-editor";
+import { DEFAULT_VENUE_IMAGE_FOCUS, normalizeVenueImageFocus } from "@/lib/utils/venue-image-position";
 import { SearchBar } from "@/components/search-bar";
 import { matchesAdminSearch } from "@/lib/utils/admin-search";
 
@@ -44,10 +47,16 @@ const emptyVenue = (cityId: string): VenueDraft => ({
   styleConfig: [],
   mapsUrl: "",
   cardImage: "",
+  cardImageFocusX: DEFAULT_VENUE_IMAGE_FOCUS.x,
+  cardImageFocusY: DEFAULT_VENUE_IMAGE_FOCUS.y,
 });
 
 export function VenuesManager({ initialVenues, artists }: VenuesManagerProps) {
+  const router = useRouter();
   const { selectedCityId } = useAdminCity();
+  const imageFocusRef = useRef<{ x: number; y: number }>({
+    ...DEFAULT_VENUE_IMAGE_FOCUS,
+  });
   const [venues, setVenues] = useState(initialVenues);
   const [draft, setDraft] = useState<VenueDraft>(emptyVenue(selectedCityId));
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -81,15 +90,24 @@ export function VenuesManager({ initialVenues, artists }: VenuesManagerProps) {
 
   function openCreateModal() {
     setEditingId(null);
+    imageFocusRef.current = { ...DEFAULT_VENUE_IMAGE_FOCUS };
     setDraft(emptyVenue(selectedCityId));
     setError(null);
     setIsModalOpen(true);
   }
 
   function openEditModal(venue: Venue) {
+    const focus = normalizeVenueImageFocus(
+      venue.cardImageFocusX,
+      venue.cardImageFocusY,
+    );
+    imageFocusRef.current = focus;
+
     setEditingId(venue.id);
     setDraft({
       ...venue,
+      cardImageFocusX: focus.x,
+      cardImageFocusY: focus.y,
       styleConfig: initStyleConfig(
         venue.styleConfig,
         venue.musicStyles,
@@ -103,6 +121,7 @@ export function VenuesManager({ initialVenues, artists }: VenuesManagerProps) {
   function closeModal() {
     setIsModalOpen(false);
     setEditingId(null);
+    imageFocusRef.current = { ...DEFAULT_VENUE_IMAGE_FOCUS };
     setDraft(emptyVenue(selectedCityId));
     setError(null);
   }
@@ -112,13 +131,26 @@ export function VenuesManager({ initialVenues, artists }: VenuesManagerProps) {
     setIsSaving(true);
     setError(null);
 
+    const focus = normalizeVenueImageFocus(
+      imageFocusRef.current.x,
+      imageFocusRef.current.y,
+    );
+
     const payload: VenueDraft = {
-      ...draft,
+      name: draft.name,
       cityId: selectedCityId,
+      venueType: draft.venueType,
+      address: draft.address,
+      hoursStart: draft.hoursStart,
+      hoursEnd: draft.hoursEnd,
+      mapsUrl: draft.mapsUrl,
+      cardImage: draft.cardImage,
+      cardImageFocusX: focus.x,
+      cardImageFocusY: focus.y,
     };
 
-    if (!editingId) {
-      delete payload.styleConfig;
+    if (editingId) {
+      payload.styleConfig = draft.styleConfig;
     }
 
     try {
@@ -148,6 +180,7 @@ export function VenuesManager({ initialVenues, artists }: VenuesManagerProps) {
       }
 
       closeModal();
+      router.refresh();
     } catch (submitError) {
       setError(
         submitError instanceof Error
@@ -347,6 +380,20 @@ export function VenuesManager({ initialVenues, artists }: VenuesManagerProps) {
               onChange={(url) =>
                 setDraft((current) => ({ ...current, cardImage: url }))
               }
+            />
+
+            <VenueImagePositionEditor
+              imageUrl={draft.cardImage}
+              focusX={draft.cardImageFocusX ?? DEFAULT_VENUE_IMAGE_FOCUS.x}
+              focusY={draft.cardImageFocusY ?? DEFAULT_VENUE_IMAGE_FOCUS.y}
+              onChange={({ x, y }) => {
+                imageFocusRef.current = { x, y };
+                setDraft((current) => ({
+                  ...current,
+                  cardImageFocusX: x,
+                  cardImageFocusY: y,
+                }));
+              }}
             />
 
             {editingId ? (

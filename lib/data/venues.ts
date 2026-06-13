@@ -9,6 +9,7 @@ import {
 import { normalizeMusicStyle } from "@/lib/utils/music-style";
 import { normalizeDisplayText } from "@/lib/utils/display-text";
 import { resolveVenueMapsUrl, resolveVenueMapsUrlForSave } from "@/lib/utils/maps-url";
+import { normalizeVenueImageFocus } from "@/lib/utils/venue-image-position";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export function mapVenue(row: DbVenue): Venue {
@@ -16,6 +17,11 @@ export function mapVenue(row: DbVenue): Venue {
   const musicStyles = getActiveStyleNames(styleConfig);
   const name = normalizeDisplayText(row.name);
   const address = normalizeDisplayText(row.address);
+
+  const focus = normalizeVenueImageFocus(
+    row.card_image_focus_x,
+    row.card_image_focus_y,
+  );
 
   return {
     id: row.id,
@@ -38,6 +44,8 @@ export function mapVenue(row: DbVenue): Venue {
       name,
     }),
     cardImage: row.card_image ?? undefined,
+    cardImageFocusX: focus.x,
+    cardImageFocusY: focus.y,
   };
 }
 
@@ -46,6 +54,11 @@ export function mapVenueToDb(
 ) {
   const name = normalizeDisplayText(venue.name);
   const address = normalizeDisplayText(venue.address);
+
+  const focus = normalizeVenueImageFocus(
+    venue.cardImageFocusX,
+    venue.cardImageFocusY,
+  );
 
   return {
     id: venue.id,
@@ -62,6 +75,8 @@ export function mapVenueToDb(
       name,
     }),
     card_image: venue.cardImage ?? null,
+    card_image_focus_x: focus.x,
+    card_image_focus_y: focus.y,
     published: venue.published ?? true,
   };
 }
@@ -180,6 +195,17 @@ export async function updateVenue(venueId: string, updates: Partial<Venue>) {
     payload.music_styles = getActiveStyleNames(updates.styleConfig);
   }
   if (updates.cardImage !== undefined) payload.card_image = updates.cardImage ?? null;
+
+  const focus = normalizeVenueImageFocus(
+    merged.cardImageFocusX,
+    merged.cardImageFocusY,
+  );
+  payload.card_image_focus_x = focus.x;
+  payload.card_image_focus_y = focus.y;
+
+  if (Object.keys(payload).length === 0) {
+    throw new Error("Aucune modification à enregistrer.");
+  }
 
   const { data, error } = await supabase
     .from("venues")

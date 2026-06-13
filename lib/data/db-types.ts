@@ -16,6 +16,8 @@ export type DbVenue = {
   style_config: unknown;
   maps_url: string;
   card_image: string | null;
+  card_image_focus_x: number;
+  card_image_focus_y: number;
   published: boolean;
   created_at: string;
 };

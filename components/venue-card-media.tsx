@@ -1,9 +1,12 @@
-import { GradientMapImage } from "@/components/gradient-map-image";
+import { VenueCardImage } from "@/components/venue-card-image";
 import { VenuePlaceholderGradient } from "@/components/venue-placeholder-gradient";
+import { DEFAULT_VENUE_IMAGE_FOCUS } from "@/lib/utils/venue-image-position";
 
 type VenueCardMediaProps = {
   venueId: string;
   imageSrc?: string;
+  focusX?: number;
+  focusY?: number;
   rounded?: "top" | "all";
 };
 
@@ -19,6 +22,8 @@ function MediaScrim() {
 export function VenueCardMedia({
   venueId,
   imageSrc,
+  focusX = DEFAULT_VENUE_IMAGE_FOCUS.x,
+  focusY = DEFAULT_VENUE_IMAGE_FOCUS.y,
   rounded = "top",
 }: VenueCardMediaProps) {
   const roundedClassName = rounded === "all" ? "rounded-2xl" : "rounded-t-2xl";
@@ -26,7 +31,11 @@ export function VenueCardMedia({
   return (
     <div className={`absolute inset-0 overflow-hidden ${roundedClassName}`}>
       {imageSrc ? (
-        <GradientMapImage src={imageSrc} className="size-full object-cover" />
+        <VenueCardImage
+          src={imageSrc}
+          focusX={focusX}
+          focusY={focusY}
+        />
       ) : (
         <VenuePlaceholderGradient venueId={venueId} />
       )}

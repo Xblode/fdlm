@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ensureAdmin } from "@/lib/auth/ensure-admin";
+import { revalidateVenuePages } from "@/lib/data/revalidate-site";
 import { createVenue, getVenues, venueExists } from "@/lib/data/venues";
 import { ensureUniqueVenueId } from "@/lib/utils/slugify";
 import type { Venue } from "@/lib/data/types";
@@ -60,8 +61,12 @@ export async function POST(request: Request) {
       musicStyles: [],
       mapsUrl: body.mapsUrl ?? "",
       cardImage: body.cardImage,
+      cardImageFocusX: body.cardImageFocusX,
+      cardImageFocusY: body.cardImageFocusY,
       published: body.published ?? false,
     });
+
+    revalidateVenuePages(venue.id);
 
     return NextResponse.json({ ok: true, data: venue });
   } catch (error) {
